@@ -1,0 +1,4502 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>最終報告 | NICヒアリング</title>
+<style>
+  :root {
+    --navy: #203764;
+    --navy-light: #2c4a82;
+    --turquoise: #00B0DD;
+    --turquoise-light: #E8F4F8;
+    --fuchsia: #C71585;
+    --fuchsia-light: #FCE4F2;
+    --orange: #F37021;
+    --beige: #F5E6D3;
+    --beige-light: #FBF6EE;
+    --gray: #BFBFBF;
+    --light-gray: #F0F0F0;
+    --text: #2A2A2A;
+    --white: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    font-family: "Hiragino Sans", "ヒラギノ角ゴシック", "Yu Gothic", "游ゴシック", sans-serif;
+    background: linear-gradient(135deg, var(--beige-light) 0%, var(--turquoise-light) 100%);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .app-container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 0 80px 0;
+  }
+
+  .header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 14px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(32, 55, 100, 0.25);
+  }
+  .header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--turquoise) 0%, var(--fuchsia) 50%, var(--orange) 100%);
+  }
+  .header-row1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .header h1 .accent {
+    color: var(--turquoise);
+    font-size: 10px;
+    margin-left: 4px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+  .header h1 .app-version {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--turquoise);
+    background: var(--white);
+    padding: 1px 7px;
+    border-radius: 10px;
+    letter-spacing: 0.03em;
+    vertical-align: middle;
+  }
+  /* 折り畳みトグル */
+  .header-toggle {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--white);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+  }
+  .header.collapsed .header-toggle {
+    transform: rotate(-90deg);
+  }
+  .header.collapsed .header-collapsible {
+    display: none;
+  }
+
+  /* 日付＋名前を横並び */
+  .header-row2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .report-date-input {
+    background: var(--white);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--navy);
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    flex: 0 1 auto;
+    width: 130px;
+    min-width: 0;
+  }
+  .name-label {
+    display: none;
+  }
+  .user-select {
+    background: var(--white);
+    border: 1px solid rgba(255,255,255,0.6);
+    color: var(--navy);
+    padding: 6px 28px 6px 10px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3e%3cpath fill='%23203764' d='M5 6L0 0h10z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    flex: 1;
+    min-width: 0;
+    letter-spacing: 0.03em;
+    text-overflow: ellipsis;
+    box-shadow: 0 0 0 1px rgba(0,176,221,0.5);
+  }
+  .user-select option {
+    background: var(--white);
+    color: var(--navy);
+    font-weight: 600;
+    padding: 8px;
+  }
+  /* エリア・事業部プルダウン行 */
+  .header-row-org {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .org-select {
+    font-size: 13px !important;
+    padding: 5px 24px 5px 8px !important;
+    font-weight: 600 !important;
+  }
+  /* 固定表示（事業部・エリア） */
+  .org-fixed {
+    flex: 1;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 6px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .org-fixed-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+  .org-fixed-value {
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .date-display {
+    display: none;
+  }
+
+  /* 送信先：折り畳み内 */
+  .header-collapsible {
+    margin-top: 8px;
+  }
+
+  /* 送信先設定 */
+  .recipients-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: rgba(0,176,221,0.15);
+    border: 1px solid rgba(0,176,221,0.4);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .recipients-bar:hover {
+    background: rgba(0,176,221,0.25);
+  }
+  .recipients-bar .icon {
+    color: var(--turquoise);
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .recipients-bar .label {
+    font-size: 10px;
+    color: var(--turquoise);
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .recipients-bar .summary {
+    font-size: 11px;
+    color: var(--white);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .recipients-bar .edit-icon {
+    font-size: 10px;
+    color: var(--turquoise);
+    flex-shrink: 0;
+  }
+
+  /* 送信先モーダル */
+  .recipients-modal-body {
+    padding: 18px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .recipient-item {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+  .recipient-item input[type="email"] {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .recipient-item input[type="email"]:focus {
+    outline: none;
+    border-color: var(--turquoise);
+    box-shadow: 0 0 0 3px rgba(0,176,221,0.1);
+  }
+  .recipient-item .delete-btn {
+    background: transparent;
+    border: 1.5px solid #999;
+    color: #666;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .recipient-item .delete-btn:hover { border-color: var(--fuchsia); color: var(--fuchsia); }
+  .recipients-help {
+    font-size: 12px;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.6;
+    padding: 8px 12px;
+    background: var(--turquoise-light);
+    border-radius: 6px;
+  }
+  .add-recipient-btn {
+    background: var(--white);
+    border: 1px dashed var(--turquoise);
+    color: var(--turquoise);
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .section {
+    background: var(--white);
+    margin: 8px 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(32, 55, 100, 0.08);
+  }
+  .section-header {
+    background: linear-gradient(90deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--white);
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .section-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+  .section-header .icon {
+    color: var(--turquoise);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .section-header .toggle {
+    transition: transform 0.3s;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .section.collapsed .toggle { transform: rotate(-90deg); }
+  .section.collapsed .section-body { display: none; }
+  .section-body { padding: 12px 14px; }
+
+  /* 現在の売上 専用スタイル */
+  .sales-section {
+    background: linear-gradient(135deg, var(--turquoise) 0%, #00C8E8 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 176, 221, 0.25);
+  }
+  .sales-header {
+    cursor: default !important;
+    padding: 10px 14px 6px !important;
+  }
+  .sales-header h2 {
+    color: var(--white) !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px !important;
+    letter-spacing: 0.05em;
+  }
+  .sales-icon {
+    font-size: 20px;
+  }
+  .sales-body {
+    padding: 4px 12px 12px !important;
+  }
+  .sales-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .sales-item {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+  .sales-item label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .sales-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--white);
+    border: 1.5px solid var(--turquoise);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .sales-stepper .stepper-btn {
+    background: var(--turquoise-light);
+    color: var(--navy);
+    border: none;
+    width: 26px;
+    height: 32px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .sales-stepper .stepper-btn:hover { background: var(--turquoise); color: var(--white); }
+  .sales-stepper .stepper-btn:active { background: var(--navy); color: var(--white); }
+  .sales-stepper input {
+    width: 36px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--fuchsia);
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    height: 32px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+    padding: 0;
+    min-width: 0;
+  }
+  .sales-stepper input::-webkit-outer-spin-button,
+  .sales-stepper input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .sales-unit {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .sales-notice {
+    background: rgba(255, 255, 255, 0.95);
+    border-left: 3px solid var(--fuchsia);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+  /* 強調版（目立つカラー） */
+  .sales-notice-strong {
+    background: var(--fuchsia);
+    color: #FFFFFF;
+    border-left: 4px solid var(--navy);
+  }
+
+  /* 実績件数セクション */
+  .perf-section {
+    background: linear-gradient(135deg, var(--beige) 0%, #FFF1DA 100%);
+    border: 1px solid #E5D5B8;
+    box-shadow: 0 3px 10px rgba(180, 150, 100, 0.15);
+    margin-bottom: 12px;
+  }
+  .perf-header {
+    cursor: pointer !important;
+    padding: 10px 14px !important;
+    background: transparent !important;
+  }
+  .perf-header h2 {
+    color: var(--navy) !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em;
+  }
+  .perf-header h2 .icon {
+    color: var(--fuchsia) !important;
+  }
+  .perf-header .toggle {
+    color: var(--navy) !important;
+  }
+  .perf-icon-inline { font-size: 18px; }
+  .perf-icon { font-size: 20px; }
+  .perf-subtitle {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fuchsia) !important;
+    margin-left: 4px;
+    letter-spacing: 0;
+  }
+  .perf-body { padding: 4px 12px 12px !important; }
+  .perf-notice {
+    background: rgba(199, 21, 133, 0.10);
+    border-left: 3px solid var(--fuchsia);
+    color: var(--fuchsia);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+  .perf-notice > div {
+    margin-bottom: 2px;
+  }
+  .perf-notice > div:last-child {
+    margin-bottom: 0;
+  }
+  .perf-notice-sub {
+    margin-top: 4px !important;
+    padding-top: 4px;
+    border-top: 1px dashed rgba(199, 21, 133, 0.3);
+  }
+  .perf-notice-example {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--navy);
+    background: rgba(255,255,255,0.6);
+    padding: 3px 6px;
+    border-radius: 3px;
+    margin-top: 3px !important;
+    line-height: 1.4;
+  }
+  .perf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (min-width: 600px) {
+    .perf-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+  .perf-group {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 8px 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .perf-group-title {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--fuchsia);
+    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+  }
+  .perf-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .perf-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: space-between;
+  }
+  .perf-item label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--navy);
+    min-width: 38px;
+  }
+  .perf-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--white);
+    border: 1.5px solid var(--navy);
+    border-radius: 6px;
+    overflow: hidden;
+    flex: 1;
+  }
+  .perf-stepper .stepper-btn {
+    background: #F0E8D8;
+    color: var(--navy);
+    border: none;
+    width: 22px;
+    height: 26px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .perf-stepper .stepper-btn:hover { background: var(--navy); color: var(--white); }
+  .perf-stepper .stepper-btn:active { background: var(--turquoise); color: var(--white); }
+  .perf-stepper input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--fuchsia);
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    height: 26px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+    padding: 0;
+  }
+  .perf-stepper input::-webkit-outer-spin-button,
+  .perf-stepper input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* 月内累計表示 */
+  .perf-monthly {
+    margin-top: 12px;
+    background: rgba(255,255,255,0.7);
+    border: 1px dashed #BFA67A;
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .perf-monthly-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .perf-monthly-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  @media (min-width: 600px) {
+    .perf-monthly-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+  /* 納品ボックス専用スタイル */
+  .perf-group-nohan {
+    border: 1.5px dashed var(--fuchsia);
+    background: #FFF5FA;
+  }
+  .perf-group-sub {
+    display: block;
+    font-size: 9px;
+    color: var(--fuchsia);
+    font-weight: 700;
+    margin-top: 1px;
+    letter-spacing: 0;
+  }
+  .perf-group-notice {
+    margin-top: 4px;
+    padding: 3px 4px;
+    background: rgba(199, 21, 133, 0.10);
+    border-radius: 3px;
+    font-size: 9px;
+    color: var(--fuchsia);
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: 1.2;
+  }
+  .perf-monthly-group {
+    background: var(--white);
+    border-radius: 6px;
+    padding: 5px 6px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .perf-monthly-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--fuchsia);
+    margin-bottom: 2px;
+  }
+  .perf-monthly-values {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    font-size: 11px;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .perf-monthly-values .num {
+    color: var(--fuchsia);
+    font-weight: 800;
+    font-size: 13px;
+    margin-left: 2px;
+  }
+
+  .count-badge {
+    background: var(--turquoise);
+    color: var(--white);
+    padding: 3px 12px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 60px;
+    text-align: center;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+  }
+  .count-badge .num {
+    font-size: 14px;
+    font-weight: 700;
+    margin-right: 2px;
+  }
+  /* 相談会専用バッジ（複数値表示） */
+  .meet-badge-group {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .meet-badge-group .count-badge {
+    min-width: 0;
+    padding: 3px 10px;
+    font-size: 11px;
+  }
+  .meet-badge-group .badge-shinki {
+    background: var(--fuchsia);
+  }
+  .meet-badge-group .badge-koukyaku {
+    background: var(--orange);
+  }
+  .meet-support-badge {
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 4px;
+    opacity: 0.95;
+  }
+
+  .inherit-badge {
+    background: var(--fuchsia);
+    color: var(--white);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  /* 警告ノート（フューシャピンク版） */
+  .warning-note {
+    background: var(--fuchsia-light);
+    border-left: 4px solid var(--fuchsia);
+    color: var(--fuchsia);
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
+  }
+  .warning-note::before {
+    content: "⚠";
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .warning-note .warning-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .warning-note .warning-text .line1 {
+    font-size: 12px;
+  }
+  .warning-note .warning-text .line2 {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.85;
+  }
+  .warning-note .pink-tag {
+    background: var(--fuchsia-light);
+    color: var(--fuchsia);
+    border: 1px solid var(--fuchsia);
+    padding: 0 4px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  .warning-note .gray-tag {
+    background: var(--light-gray);
+    color: #555;
+    border: 1px solid var(--gray);
+    padding: 0 4px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+
+  .summary-total {
+    background: var(--turquoise-light);
+    border-left: 4px solid var(--fuchsia);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .summary-total label {
+    font-size: 13px;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .summary-total .total-display {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--fuchsia);
+  }
+  .summary-total .auto-tag {
+    font-size: 10px;
+    background: var(--fuchsia);
+    color: var(--white);
+    padding: 2px 6px;
+    border-radius: 8px;
+    margin-left: 6px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+  .summary-total .unit {
+    font-size: 13px;
+    color: var(--navy);
+    margin-left: 4px;
+  }
+
+  .area-block { margin-bottom: 14px; }
+  .area-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    border-bottom: 2px solid var(--turquoise);
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .area-title .area-sub-total {
+    font-size: 11px;
+    color: var(--fuchsia);
+    font-weight: 700;
+    text-align: right;
+    line-height: 1.4;
+  }
+  .area-title .area-sub-total .breakdown {
+    display: block;
+    font-size: 10px;
+    color: var(--navy);
+    font-weight: 600;
+    margin-top: 2px;
+    letter-spacing: -0.02em;
+  }
+  /* エリア内 県セレクト */
+  .area-pref-select {
+    border: 1px solid var(--navy);
+    color: var(--navy);
+    padding: 4px 24px 4px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    background-color: var(--white);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3e%3cpath fill='%23203764' d='M4 5L0 0h8z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+  }
+  .count-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  /* タブレット・PC：4列（8項目が2行で収まる） */
+  @media (min-width: 600px) {
+    .count-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .count-item {
+    background: var(--beige-light);
+    border-radius: 6px;
+    padding: 8px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+    min-width: 0;
+  }
+  .count-item:focus-within {
+    border-color: var(--turquoise);
+    background: var(--white);
+  }
+  .count-item label {
+    font-size: 12px;
+    color: var(--navy);
+    font-weight: 600;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .count-item .num-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--white);
+    border-radius: 6px;
+    border: 1px solid var(--gray);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .count-item .stepper-btn {
+    background: var(--turquoise-light);
+    border: none;
+    color: var(--navy);
+    width: 26px;
+    height: 30px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .count-item .stepper-btn:hover { background: var(--turquoise); color: var(--white); }
+  .count-item .stepper-btn:active { background: var(--navy); color: var(--white); }
+  .count-item .stepper-btn.minus { border-right: 1px solid var(--gray); }
+  .count-item .stepper-btn.plus { border-left: 1px solid var(--gray); }
+  .count-item input {
+    width: 32px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    height: 30px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+    padding: 0;
+    min-width: 0;
+  }
+  .count-item input::-webkit-outer-spin-button,
+  .count-item input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* 本日の商談 */
+  .today-cat {
+    margin-bottom: 14px;
+    background: var(--beige-light);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .today-cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .today-cat-header label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .today-cat-header label .cat-icon {
+    color: var(--turquoise);
+    margin-right: 4px;
+  }
+  .today-sub-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .today-sub-item .bullet {
+    color: var(--turquoise);
+    font-weight: 700;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  .today-sub-item textarea {
+    flex: 1;
+    border: 1px solid transparent;
+    background: var(--white);
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 32px;
+    resize: none;
+  }
+  .today-sub-item textarea:focus {
+    outline: none;
+    border-color: var(--turquoise);
+    box-shadow: 0 0 0 2px rgba(0,176,221,0.1);
+  }
+  .today-sub-item textarea::placeholder {
+    color: #B5A88D;
+    font-size: 12.5px;
+  }
+  .today-sub-item .delete-btn {
+    background: transparent;
+    border: 1.5px solid #999;
+    color: #666;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+  .add-sub-btn {
+    background: transparent;
+    border: 1px dashed var(--turquoise);
+    color: var(--turquoise);
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* 翌営業日 */
+  .next-day {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+  .next-day label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    min-width: 90px;
+  }
+  .next-day input[type="date"] {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    background: var(--white);
+  }
+  .next-day-weekday {
+    background: var(--fuchsia);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 6px;
+    min-width: 32px;
+    text-align: center;
+    display: inline-block;
+  }
+  .next-free { margin-top: 6px; }
+  .next-free label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .next-free textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 10px 12px;
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    background: var(--beige-light);
+  }
+  .next-free textarea:focus {
+    outline: none;
+    border-color: var(--turquoise);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(0,176,221,0.1);
+  }
+  /* メモ欄 */
+  .memo-area { width: 100%; }
+  .memo-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px 12px;
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    background: var(--beige-light);
+    box-sizing: border-box;
+  }
+  .memo-textarea:focus {
+    outline: none;
+    border-color: var(--turquoise);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(0,176,221,0.1);
+  }
+
+  .list-area { margin-bottom: 16px; }
+  .list-area-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    background: var(--beige);
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .list-area-title .sub-count {
+    background: var(--navy);
+    color: var(--white);
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .list-area-title .sub-count.meet-count {
+    background: var(--fuchsia);
+  }
+  .list-area-title .pref-select {
+    border: 1px solid var(--navy);
+    color: var(--navy);
+    padding: 3px 22px 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    background-color: var(--white);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3e%3cpath fill='%23203764' d='M4 5L0 0h8z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+  }
+  .pref-block-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .pref-remove-btn {
+    background: transparent;
+    border: 1.5px solid #999;
+    color: #666;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .pref-remove-btn:hover { border-color: var(--fuchsia); color: var(--fuchsia); }
+
+  .list-item {
+    background: var(--beige-light);
+    border-left: 3px solid var(--turquoise);
+    padding: 8px 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  .list-item .seq-num {
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 13px;
+    min-width: 24px;
+    text-align: right;
+    margin-top: 4px;
+    font-family: "SF Mono", monospace;
+  }
+  .list-item.res-keiyaku {   /* 契約・未計上 → 薄ピンク */
+    border-left-color: var(--fuchsia);
+    background: #FFF0F8;
+  }
+  .list-item.res-green {     /* 再訪・貸出 → 薄グリーン */
+    border-left-color: #4CAF7D;
+    background: #EAF7EF;
+  }
+  .list-item.res-gray {      /* SO → 薄グレー */
+    border-left-color: var(--gray);
+    background: var(--light-gray);
+  }
+  .list-item.res-beige {     /* 検討/後追・他 → ベージュ */
+    border-left-color: #C9A86A;
+    background: #F7F1E4;
+  }
+  .list-item.res-none {      /* 未選択 → 識別カラー（黄色系で目立たせる） */
+    border-left-color: #F5A623;
+    background: #FFF8E8;
+  }
+  .list-item.res-keiyaku .seq-num { color: var(--fuchsia); }
+  .list-item .result-mark {
+    font-size: 13px;
+    margin-top: 4px;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+  .list-item textarea {
+    flex: 1;
+    border: 1px solid rgba(0,0,0,0.12);
+    background: var(--white);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: none;
+    min-height: 38px;
+    padding: 4px 6px;
+    border-radius: 4px;
+  }
+  .list-item textarea:focus {
+    outline: none;
+    background: var(--white);
+    border-color: var(--turquoise);
+    border-radius: 4px;
+  }
+  .list-item textarea::placeholder {
+    color: rgba(32, 55, 100, 0.4);
+    font-size: 11.5px;
+    font-style: italic;
+  }
+  .list-item textarea::-webkit-input-placeholder {
+    color: rgba(32, 55, 100, 0.4);
+    font-size: 11.5px;
+    font-style: italic;
+  }
+  .list-item .delete-btn {
+    background: transparent;
+    border: 1.5px solid #999;
+    color: #666;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .list-item .delete-btn:hover { border-color: var(--fuchsia); color: var(--fuchsia); }
+  .sub-breakdown {
+    color: var(--fuchsia);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: right;
+    padding: 4px 4px 8px;
+    letter-spacing: 0.02em;
+  }
+  .list-item .list-dropdown {
+    background: var(--white);
+    border: 1px solid var(--gray);
+    border-radius: 4px;
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 600;
+    font-family: inherit;
+    padding: 2px 14px 2px 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 10 6'%3e%3cpath fill='%23203764' d='M5 6L0 0h10z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 3px center;
+    min-width: 60px;
+    max-width: 80px;
+  }
+  .list-item .list-dropdown:focus {
+    outline: none;
+    border-color: var(--turquoise);
+  }
+
+  /* 相談会専用アイテム */
+  .meet-item {
+    background: var(--beige-light);
+    border-left: 3px solid var(--fuchsia);
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .meet-item .seq-num {
+    font-weight: 700;
+    color: var(--fuchsia);
+    font-size: 14px;
+    min-width: 24px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .meet-item .meet-date {
+    width: 60px;
+    border: 1px solid var(--gray);
+    background: var(--white);
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .meet-item .meet-venue {
+    flex: 1;
+    border: 1px solid var(--gray);
+    background: var(--white);
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    min-width: 100px;
+  }
+  .meet-item .meet-num-group {
+    display: flex;
+    gap: 0;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .meet-item .meet-num-label {
+    font-size: 11px;
+    color: var(--navy);
+    font-weight: 600;
+    margin: 0 4px;
+  }
+  .meet-item .meet-stepper {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--gray);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .meet-item .meet-stepper-btn {
+    background: var(--turquoise-light);
+    border: none;
+    color: var(--navy);
+    width: 26px;
+    height: 28px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .meet-item .meet-stepper-btn:active { background: var(--navy); color: var(--white); }
+  .meet-item .meet-stepper-btn.minus { border-right: 1px solid var(--gray); }
+  .meet-item .meet-stepper-btn.plus { border-left: 1px solid var(--gray); }
+  .meet-item .meet-num {
+    width: 36px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-family: inherit;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 700;
+    height: 28px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .meet-item .meet-num::-webkit-outer-spin-button,
+  .meet-item .meet-num::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .meet-item .meet-num.shinki { color: var(--fuchsia); }
+  .meet-item .meet-num.koukyaku { color: var(--orange); }
+  .meet-item .meet-date:focus,
+  .meet-item .meet-venue:focus {
+    outline: none;
+    border-color: var(--turquoise);
+    box-shadow: 0 0 0 2px rgba(0,176,221,0.1);
+  }
+  .meet-item .meet-stepper:focus-within {
+    border-color: var(--turquoise);
+    box-shadow: 0 0 0 2px rgba(0,176,221,0.1);
+  }
+  .meet-item .delete-btn {
+    background: transparent;
+    border: 1.5px solid #999;
+    color: #666;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  /* 相談会アイテム：狭い画面では2行レイアウト */
+  @media (max-width: 600px) {
+    .meet-item {
+      flex-wrap: wrap;
+    }
+    .meet-item .meet-venue {
+      flex: 1 1 100%;
+      order: 3;
+    }
+    .meet-item .meet-num-group {
+      order: 4;
+    }
+  }
+
+  .add-btn {
+    background: var(--white);
+    border: 1px dashed var(--turquoise);
+    color: var(--turquoise);
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 4px;
+    transition: all 0.2s;
+  }
+  .add-btn:hover { background: var(--turquoise-light); border-style: solid; }
+  .add-pref-btn {
+    background: var(--white);
+    border: 1px dashed var(--navy);
+    color: var(--navy);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  .sub-section {
+    border: 1px solid var(--turquoise-light);
+    border-radius: 8px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .sub-section-header {
+    background: var(--turquoise-light);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .sub-section-header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sub-section-header h3::before {
+    content: "▸";
+    color: var(--turquoise);
+    transition: transform 0.3s;
+    display: inline-block;
+  }
+  .sub-section.collapsed .sub-section-header h3::before { transform: rotate(0deg); }
+  .sub-section:not(.collapsed) .sub-section-header h3::before { transform: rotate(90deg); }
+  .sub-section.collapsed .sub-section-body { display: none; }
+  .sub-section-body { padding: 12px; background: var(--white); }
+  .sub-section-header .count-badge {
+    background: var(--navy);
+    min-width: 50px;
+    font-size: 11px;
+    padding: 2px 10px;
+  }
+
+  .seikyo-block {
+    border: 1px solid var(--beige);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 14px;
+    background: var(--beige-light);
+  }
+  .seikyo-block-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .seikyo-block-title .sub-count {
+    background: var(--navy);
+    color: var(--white);
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .stock-item {
+    background: var(--beige-light);
+    padding: 8px 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .stock-item input[type="text"] {
+    flex: 1;
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 4px 6px;
+    border-radius: 4px;
+  }
+  .stock-item input[type="text"]:focus {
+    outline: none;
+    background: var(--white);
+    border-color: var(--turquoise);
+  }
+  .stock-item .delete-btn {
+    background: transparent;
+    border: 1.5px solid #999;
+    color: #666;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .submit-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    box-shadow: 0 -2px 12px rgba(32, 55, 100, 0.15);
+    padding: 8px 12px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+  .submit-area .preview-btn {
+    flex: 1;
+    background: var(--white);
+    border: 2px solid var(--navy);
+    color: var(--navy);
+    padding: 11px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .submit-area .send-btn {
+    flex: 2;
+    background: linear-gradient(135deg, var(--fuchsia) 0%, var(--orange) 100%);
+    border: none;
+    color: var(--white);
+    padding: 11px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(199,21,133,0.3);
+    letter-spacing: 0.05em;
+  }
+  .submit-area .send-btn:active { transform: translateY(1px); }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(32,55,100,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 16px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 12px;
+    max-width: 720px;
+    width: 100%;
+    max-height: 85vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h3 { font-size: 16px; }
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-size: 22px;
+    cursor: pointer;
+  }
+  .modal-body {
+    padding: 18px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .modal-body pre {
+    font-family: "SF Mono", "Menlo", "Consolas", monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: var(--text);
+  }
+  .modal-footer {
+    padding: 14px 18px;
+    border-top: 1px solid var(--light-gray);
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .modal-footer button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-secondary {
+    background: var(--white);
+    border: 1px solid var(--gray) !important;
+    color: var(--text);
+  }
+  .btn-primary {
+    background: var(--fuchsia);
+    color: var(--white);
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-200%);
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 16px rgba(32,55,100,0.3);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 300;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+  <!-- パスワード画面（1日1回） -->
+  <div id="lockScreen" style="position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#203764,#2d4a7c);display:flex;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;padding:32px 28px;width:86%;max-width:340px;box-shadow:0 10px 40px rgba(0,0,0,0.3);text-align:center;">
+      <div style="font-size:15px;font-weight:700;color:#203764;margin-bottom:6px;">稼働状況報告アプリ</div>
+      <div style="font-size:12px;color:#888;margin-bottom:20px;">パスワードを入力してください</div>
+      <input type="password" id="lockInput" inputmode="numeric" maxlength="10" autocomplete="off"
+        style="width:100%;box-sizing:border-box;font-size:22px;text-align:center;letter-spacing:0.3em;padding:12px;border:2px solid #ccc;border-radius:10px;margin-bottom:8px;">
+      <div id="lockError" style="color:#E11A54;font-size:12px;font-weight:700;height:16px;margin-bottom:10px;"></div>
+      <button onclick="checkPassword()"
+        style="width:100%;background:#E11A54;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;">ログイン</button>
+    </div>
+  </div>
+
+
+<div class="app-container">
+
+  <header class="header" id="appHeader">
+    <div class="header-row1">
+      <h1>【最終報告】<span class="accent">NICHY_DAILY REPORT</span><span class="app-version" id="appVersion"></span></h1>
+      <button class="header-toggle" onclick="toggleHeader()" aria-label="ヘッダー開閉">▼</button>
+    </div>
+    <div class="header-row-org">
+      <div class="org-fixed" id="divisionFixed">
+        <span class="org-fixed-label">事業部</span>
+        <span class="org-fixed-value">ヒアリング事業部</span>
+      </div>
+      <div class="org-fixed" id="areaFixed">
+        <span class="org-fixed-label">エリア</span>
+        <span class="org-fixed-value">東北南三県</span>
+      </div>
+      <!-- 内部値保持用（hidden）-->
+      <input type="hidden" id="divisionSelect" value="ヒアリング事業部">
+      <input type="hidden" id="areaSelect" value="東北南三県">
+    </div>
+    <div class="header-row2">
+      <input type="date" id="reportDate" class="report-date-input">
+      <select class="user-select" id="userSelect">
+        <option value="">読込中...</option>
+      </select>
+    </div>
+    <div class="date-display" id="dateDisplay"></div>
+
+    <!-- 折り畳み可能エリア -->
+    <div class="header-collapsible">
+      <div class="recipients-bar" onclick="openRecipientsModal()">
+        <span class="icon">📧</span>
+        <span class="label">送信先</span>
+        <span class="summary" id="recipientsSummary">未設定</span>
+        <span class="edit-icon">編集 ✎</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 客数報告 -->
+  <section class="section perf-section" id="sec-perf">
+    <div class="section-header perf-header" onclick="toggleSection('sec-perf')">
+      <h2><span class="icon">▶</span><span class="perf-icon-inline">📊</span>客数報告<span class="perf-subtitle">（当日分の数値を入力する）</span></h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body perf-body">
+      <div class="perf-notice">
+        <div>⚠ この項目の数値が日報へ反映されます</div>
+        <div class="perf-notice-sub">⚠ 同日内に再送信する場合は、前回送信後に追加発生した分のみ入力</div>
+        <div class="perf-notice-example">（例：本日1回目に客数3を送信済 → 1の漏れがあった → 本日2回目「1」のみ入力／「4」と入れない）</div>
+      </div>
+      <div class="perf-grid">
+        <div class="perf-group">
+          <div class="perf-group-title">客数</div>
+          <div class="perf-pair">
+            <div class="perf-item">
+              <label>総合計</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-kyaku-total" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+            <div class="perf-item">
+              <label>新規</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-kyaku-new" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="perf-group">
+          <div class="perf-group-title">商談</div>
+          <div class="perf-pair">
+            <div class="perf-item">
+              <label>総合計</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-shodan-total" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+            <div class="perf-item">
+              <label>新規</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-shodan-new" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="perf-group">
+          <div class="perf-group-title">試聴</div>
+          <div class="perf-pair">
+            <div class="perf-item">
+              <label>総合計</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-shicho-total" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+            <div class="perf-item">
+              <label>新規</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-shicho-new" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="perf-group">
+          <div class="perf-group-title">契約</div>
+          <div class="perf-pair">
+            <div class="perf-item">
+              <label>総合計</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-keiyaku-total" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+            <div class="perf-item">
+              <label>新規</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-keiyaku-new" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="perf-group">
+          <div class="perf-group-title">契約CAN</div>
+          <div class="perf-pair">
+            <div class="perf-item">
+              <label>総合計</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-can-total" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+            <div class="perf-item">
+              <label>新規</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-can-new" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="perf-group perf-group-nohan">
+          <div class="perf-group-title">納品<span class="perf-group-sub">※確認用※</span></div>
+          <div class="perf-pair">
+            <div class="perf-item">
+              <label>総合計</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-nohin-total" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+            <div class="perf-item">
+              <label>新規</label>
+              <div class="num-stepper perf-stepper">
+                <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+                <input type="number" id="perf-nohin-new" value="0" inputmode="numeric">
+                <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+              </div>
+            </div>
+          </div>
+          <div class="perf-group-notice">※日報には反映されません※報告漏れ確認用です</div>
+        </div>
+      </div>
+      <!-- 月内累計表示 -->
+      <div class="perf-monthly">
+        <div class="perf-monthly-title">月内累計（自動計算・翌月リセット）</div>
+        <div class="perf-monthly-grid">
+          <div class="perf-monthly-group">
+            <div class="perf-monthly-label">客数</div>
+            <div class="perf-monthly-values">
+              <span>総合計 <span class="num" id="perf-month-kyaku-total">0</span></span>
+              <span>新規 <span class="num" id="perf-month-kyaku-new">0</span></span>
+            </div>
+          </div>
+          <div class="perf-monthly-group">
+            <div class="perf-monthly-label">商談</div>
+            <div class="perf-monthly-values">
+              <span>総合計 <span class="num" id="perf-month-shodan-total">0</span></span>
+              <span>新規 <span class="num" id="perf-month-shodan-new">0</span></span>
+            </div>
+          </div>
+          <div class="perf-monthly-group">
+            <div class="perf-monthly-label">試聴</div>
+            <div class="perf-monthly-values">
+              <span>総合計 <span class="num" id="perf-month-shicho-total">0</span></span>
+              <span>新規 <span class="num" id="perf-month-shicho-new">0</span></span>
+            </div>
+          </div>
+          <div class="perf-monthly-group">
+            <div class="perf-monthly-label">契約</div>
+            <div class="perf-monthly-values">
+              <span>総合計 <span class="num" id="perf-month-keiyaku-total">0</span></span>
+              <span>新規 <span class="num" id="perf-month-keiyaku-new">0</span></span>
+            </div>
+          </div>
+          <div class="perf-monthly-group">
+            <div class="perf-monthly-label">契約CAN</div>
+            <div class="perf-monthly-values">
+              <span>総合計 <span class="num" id="perf-month-can-total">0</span></span>
+              <span>新規 <span class="num" id="perf-month-can-new">0</span></span>
+            </div>
+          </div>
+          <div class="perf-monthly-group">
+            <div class="perf-monthly-label">納品</div>
+            <div class="perf-monthly-values">
+              <span>総合計 <span class="num" id="perf-month-nohin-total">0</span></span>
+              <span>新規 <span class="num" id="perf-month-nohin-new">0</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 現在の売上 -->
+  <section class="section sales-section" id="sec-sales">
+    <div class="section-header sales-header">
+      <h2><span class="sales-icon">💎</span>現在の売上</h2>
+    </div>
+    <div class="section-body sales-body" style="display: block;">
+      <div class="sales-notice sales-notice-strong">⚠『現在の売上』の数値は独立しています。上部の『客数報告（当日分）』とは連動しません。</div>
+      <div class="sales-grid">
+        <div class="sales-item">
+          <label>前月繰越</label>
+          <div class="num-stepper sales-stepper">
+            <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+            <input type="number" id="sales-prev-carry" value="0" inputmode="numeric">
+            <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+          </div>
+          <span class="sales-unit">台</span>
+        </div>
+        <div class="sales-item">
+          <label>今月JA</label>
+          <div class="num-stepper sales-stepper">
+            <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+            <input type="number" id="sales-this-ja" value="0" inputmode="numeric">
+            <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+          </div>
+          <span class="sales-unit">台</span>
+        </div>
+        <div class="sales-item">
+          <label>今月生協</label>
+          <div class="num-stepper sales-stepper">
+            <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+            <input type="number" id="sales-this-seikyo" value="0" inputmode="numeric">
+            <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+          </div>
+          <span class="sales-unit">台</span>
+        </div>
+        <div class="sales-item">
+          <label>来月繰越</label>
+          <div class="num-stepper sales-stepper">
+            <button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+            <input type="number" id="sales-next-month" value="0" inputmode="numeric">
+            <button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+          </div>
+          <span class="sales-unit">台</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 商談件数 月間累計 -->
+  <section class="section collapsed" id="sec-count">
+    <div class="section-header" onclick="toggleSection('sec-count')">
+      <h2><span class="icon">▶</span>商談件数 月間累計<span class="inherit-badge">前日引継</span></h2>
+      <div class="count-badge"><span class="num" id="badge-count">0</span>件</div>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="summary-total">
+        <label>月間累計合計<span class="auto-tag">自動計算</span></label>
+        <div>
+          <span class="total-display" id="totalDisplay">0</span><span class="unit">件</span>
+        </div>
+      </div>
+
+      <div class="area-block">
+        <div class="area-title">
+          <select class="area-pref-select" id="aichi-pref-select">
+            <option value="愛知" selected>愛知</option>
+          </select>
+          <span class="area-sub-total" id="aichi-subtotal">合計商談 0件</span>
+        </div>
+        <div class="count-grid">
+          <div class="count-item"><label>相談会</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="aichi" data-cat="shinki" data-key="aichi-soudan" value="13" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>返信</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="aichi" data-cat="shinki" data-key="aichi-henshin" value="3" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>問合</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="aichi" data-cat="shinki" data-key="aichi-toiawase" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>J紹</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="aichi" data-cat="shinki" data-key="aichi-jsho" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>客紹</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="aichi" data-cat="shinki" data-key="aichi-kakusho" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>追買</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="aichi" data-cat="repeat" data-key="aichi-tsuikai" value="4" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>SO</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="aichi" data-cat="other" data-key="aichi-so" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>その他</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="aichi" data-cat="other" data-key="aichi-other" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+        </div>
+      </div>
+
+      <div class="area-block">
+        <div class="area-title">
+          <span>生協</span>
+          <span class="area-sub-total" id="seikyo-subtotal">合計商談 0件</span>
+        </div>
+        <div class="count-grid">
+          <div class="count-item"><label>相談会</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="seikyo" data-cat="shinki" data-key="seikyo-soudan" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>返信</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="seikyo" data-cat="shinki" data-key="seikyo-henshin" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>問合</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="seikyo" data-cat="shinki" data-key="seikyo-toiawase" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label id="seikyo-jsho-label">生紹</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="seikyo" data-cat="shinki" data-key="seikyo-jsho" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>客紹</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="seikyo" data-cat="shinki" data-key="seikyo-kakusho" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>追買</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="seikyo" data-cat="repeat" data-key="seikyo-tsuikai" value="1" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>SO</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="seikyo" data-cat="other" data-key="seikyo-so" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+          <div class="count-item"><label>その他</label><div class="num-stepper"><button type="button" class="stepper-btn minus" onclick="stepInput(this,-1)">−</button><input type="number" data-area="seikyo" data-cat="other" data-key="seikyo-other" value="0" inputmode="numeric"><button type="button" class="stepper-btn plus" onclick="stepInput(this,1)">＋</button></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 本日の商談 -->
+  <section class="section collapsed" id="sec-today">
+    <div class="section-header" onclick="toggleSection('sec-today')">
+      <h2><span class="icon">▶</span>本日の商談・結果</h2>
+      <div class="count-badge"><span class="num" id="badge-today">0</span>件</div>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body" id="today-body"></div>
+  </section>
+
+  <!-- メモ -->
+  <section class="section collapsed" id="sec-memo">
+    <div class="section-header" onclick="toggleSection('sec-memo')">
+      <h2><span class="icon">▶</span>メモ</h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="memo-area">
+        <textarea id="memo-text" class="memo-textarea" placeholder="自由記入欄（連絡事項・気付き・申し送りなど）" rows="4"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- 翌営業日の予定 -->
+  <section class="section collapsed" id="sec-next">
+    <div class="section-header" onclick="toggleSection('sec-next')">
+      <h2><span class="icon">▶</span>翌営業日の予定</h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="next-day">
+        <label>営業日</label>
+        <input type="date" id="nextDate">
+        <span class="next-day-weekday" id="nextDateWeekday"></span>
+      </div>
+      <div class="next-free">
+        <label>予定内容(自由記入)</label>
+        <textarea data-key="next-free" placeholder="例：&#10;・相談会　JAなごや守山&#10;・来場再訪　JAなごや千種　○○様&#10;・刈取　2台○○様&#10;・返信　JAなごや　○○様"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- 今月の相談会 -->
+  <section class="section collapsed" id="sec-meet">
+    <div class="section-header" onclick="toggleSection('sec-meet')">
+      <h2><span class="icon">▶</span>今月の相談会<span class="inherit-badge">前日引継</span></h2>
+      <div class="meet-badge-group">
+        <div class="count-badge">JA<span class="num" id="badge-meet">0</span>会場<span class="meet-support-badge">（内サポ会場　<span id="badge-meet-support">0</span>）</span></div>
+        <div class="count-badge badge-shinki">JA新規<span class="num" id="badge-meet-shinki" style="margin: 0 2px;">0</span>名</div>
+        <div class="count-badge badge-koukyaku">JA顧客<span class="num" id="badge-meet-koukyaku" style="margin: 0 2px;">0</span>名</div>
+      </div>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div id="meet-pref-blocks"></div>
+      <button class="add-pref-btn" onclick="addPrefBlock('meet')">＋ 県を追加</button>
+
+      <div class="list-area" style="margin-top: 12px;">
+        <div class="list-area-title">
+          <span>《生協》会場</span>
+          <span class="sub-count meet-count" id="cnt-meet-seikyo">生協0会場（内サポ会場 0）、新規0名、顧客0名</span>
+        </div>
+        <div id="meet-seikyo-list"></div>
+        <button class="add-btn" onclick="addMeetItemToList('meet-seikyo-list')">＋ 相談会を追加</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 新規---来場 -->
+  <section class="section collapsed" id="sec-raijo">
+    <div class="section-header" onclick="toggleSection('sec-raijo')">
+      <h2><span class="icon">▶</span>新規---来場<span class="inherit-badge">前日引継</span></h2>
+      <div class="count-badge">JA※<span class="num" id="badge-raijo-ast">0</span>件・JA今月<span class="num" id="badge-raijo">0</span>件<span class="meet-support-badge">（内サポAPO　<span id="badge-raijo-support">0</span>件）</span></div>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="warning-note">
+        <div class="warning-text">
+          <span class="line1">各案件の右端の<span class="pink-tag">結果プルダウン</span>を必ず選択する（契約・再訪・貸出・SO・検討/後追・未計上・他）</span>
+          <span class="line2">※結果で自動色付け。未選択は黄色で表示／メールは契約[⭕️]等で表記</span>
+        </div>
+      </div>
+      <div id="raijo-pref-blocks"></div>
+      <button class="add-pref-btn" onclick="addPrefBlock('raijo')">＋ 県を追加</button>
+
+      <div class="seikyo-block">
+        <div class="seikyo-block-title">
+          <span>《生協》来場</span>
+          <span class="sub-count" id="cnt-raijo-seikyo">生協※0件・生協今月0件（内サポAPO 0件）</span>
+        </div>
+        <div id="raijo-seikyo-list"></div>
+        <button class="add-btn" onclick="addItemToList('raijo-seikyo-list', true)">＋ 来場記録を追加</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- JA《新規》---返信・問合・紹介・他 -->
+  <section class="section collapsed" id="sec-resp">
+    <div class="section-header" onclick="toggleSection('sec-resp')">
+      <h2><span class="icon">▶</span>JA《新規》---返信・問合・紹介・他<span class="inherit-badge">前日引継</span></h2>
+      <div class="count-badge">JA※<span class="num" id="badge-resp-ast">0</span>件・JA今月<span class="num" id="badge-resp">0</span>件</div>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="warning-note">
+        <div class="warning-text">
+          <span class="line1">各案件の右端の<span class="pink-tag">結果プルダウン</span>を必ず選択する（契約・再訪・貸出・SO・検討/後追・未計上・他）</span>
+          <span class="line2">※結果で自動色付け。未選択は黄色で表示／メールは契約[⭕️]等で表記</span>
+        </div>
+      </div>
+
+      <div class="sub-section" id="sub-respH">
+        <div class="sub-section-header" onclick="toggleSubSection('sub-respH')">
+          <h3>JA新規---返信</h3>
+          <div class="count-badge"><span class="num" id="badge-respH">0</span>件</div>
+        </div>
+        <div class="sub-section-body">
+          <div id="respH-pref-blocks"></div>
+          <button class="add-pref-btn" onclick="addPrefBlock('respH')">＋ 県を追加</button>
+        </div>
+      </div>
+
+      <div class="sub-section collapsed" id="sub-respT">
+        <div class="sub-section-header" onclick="toggleSubSection('sub-respT')">
+          <h3>JA新規---問合</h3>
+          <div class="count-badge"><span class="num" id="badge-respT">0</span>件</div>
+        </div>
+        <div class="sub-section-body">
+          <div id="respT-pref-blocks"></div>
+          <button class="add-pref-btn" onclick="addPrefBlock('respT')">＋ 県を追加</button>
+        </div>
+      </div>
+
+      <div class="sub-section collapsed" id="sub-respJ">
+        <div class="sub-section-header" onclick="toggleSubSection('sub-respJ')">
+          <h3>JA新規---JA紹介・客紹介</h3>
+          <div class="count-badge"><span class="num" id="badge-respJ">0</span>件</div>
+        </div>
+        <div class="sub-section-body">
+          <div class="sub-breakdown" id="breakdown-respJ">（JA紹介0件、客紹介0件）</div>
+          <div id="respJ-pref-blocks"></div>
+          <button class="add-pref-btn" onclick="addPrefBlock('respJ')">＋ 県を追加</button>
+        </div>
+      </div>
+
+      <div class="sub-section collapsed" id="sub-respS">
+        <div class="sub-section-header" onclick="toggleSubSection('sub-respS')">
+          <h3>JA新規---SP紹介・担当者紹介・他</h3>
+          <div class="count-badge"><span class="num" id="badge-respS">0</span>件</div>
+        </div>
+        <div class="sub-section-body">
+          <div class="sub-breakdown" id="breakdown-respS">（SP紹介0件、担当者紹介0件、他0件）</div>
+          <div id="respS-pref-blocks"></div>
+          <button class="add-pref-btn" onclick="addPrefBlock('respS')">＋ 県を追加</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 生協《新規》---返信・問合・紹介・他 -->
+  <section class="section collapsed" id="sec-sresp">
+    <div class="section-header" onclick="toggleSection('sec-sresp')">
+      <h2><span class="icon">▶</span>生協《新規》---返信・問合・紹介・他<span class="inherit-badge">前日引継</span></h2>
+      <div class="count-badge">JA※<span class="num" id="badge-sresp-ast">0</span>件・JA今月<span class="num" id="badge-sresp">0</span>件</div>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="warning-note">
+        <div class="warning-text">
+          <span class="line1">各案件の右端の<span class="pink-tag">結果プルダウン</span>を必ず選択する（契約・再訪・貸出・SO・検討/後追・未計上・他）</span>
+          <span class="line2">※結果で自動色付け。未選択は黄色で表示／メールは契約[⭕️]等で表記</span>
+        </div>
+      </div>
+
+      <div class="sub-section" id="sub-srespH">
+        <div class="sub-section-header" onclick="toggleSubSection('sub-srespH')">
+          <h3>生協新規---返信</h3>
+          <div class="count-badge"><span class="num" id="badge-srespH">0</span>件</div>
+        </div>
+        <div class="sub-section-body">
+          <div id="srespH-list"></div>
+          <button class="add-btn" onclick="addItemToList('srespH-list', true)">＋ 案件を追加</button>
+        </div>
+      </div>
+
+      <div class="sub-section collapsed" id="sub-srespT">
+        <div class="sub-section-header" onclick="toggleSubSection('sub-srespT')">
+          <h3>生協新規---問合</h3>
+          <div class="count-badge"><span class="num" id="badge-srespT">0</span>件</div>
+        </div>
+        <div class="sub-section-body">
+          <div id="srespT-list"></div>
+          <button class="add-btn" onclick="addItemToList('srespT-list', true)">＋ 案件を追加</button>
+        </div>
+      </div>
+
+      <div class="sub-section collapsed" id="sub-srespJ">
+        <div class="sub-section-header" onclick="toggleSubSection('sub-srespJ')">
+          <h3>生協新規---生協紹介・客紹介</h3>
+          <div class="count-badge"><span class="num" id="badge-srespJ">0</span>件</div>
+        </div>
+        <div class="sub-section-body">
+          <div class="sub-breakdown" id="breakdown-srespJ">（生協紹介0件、客紹介0件）</div>
+          <div id="srespJ-list"></div>
+          <button class="add-btn" onclick="addItemToList('srespJ-list', true)">＋ 案件を追加</button>
+        </div>
+      </div>
+
+      <div class="sub-section collapsed" id="sub-srespS">
+        <div class="sub-section-header" onclick="toggleSubSection('sub-srespS')">
+          <h3>生協新規---SP紹介・担当者紹介・他</h3>
+          <div class="count-badge"><span class="num" id="badge-srespS">0</span>件</div>
+        </div>
+        <div class="sub-section-body">
+          <div class="sub-breakdown" id="breakdown-srespS">（SP紹介0件、担当者紹介0件、他0件）</div>
+          <div id="srespS-list"></div>
+          <button class="add-btn" onclick="addItemToList('srespS-list', true)">＋ 案件を追加</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 在庫 -->
+  <section class="section collapsed" id="sec-stock">
+    <div class="section-header" onclick="toggleSection('sec-stock')">
+      <h2><span class="icon">▶</span>在庫<span class="inherit-badge">前日引継</span></h2>
+      <div class="count-badge"><span class="num" id="badge-stock">0</span>件</div>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div id="stock-list"></div>
+      <button class="add-btn" onclick="addStock()">＋ 在庫を追加</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="submit-area">
+  <button class="preview-btn" onclick="showPreview()">プレビュー</button>
+  <button class="send-btn" onclick="sendReport()">📩 送信</button>
+</div>
+
+<!-- 送信先設定モーダル -->
+<div class="modal-overlay" id="recipientsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📧 送信先メールアドレス設定</h3>
+      <button class="modal-close" onclick="closeRecipientsModal()">×</button>
+    </div>
+    <div class="recipients-modal-body">
+      <div class="recipients-help">
+        報告書を送信するメールアドレスを設定します。<br>
+        複数の送信先を追加できます。設定内容は端末に保存されます。
+      </div>
+      <div id="recipientsList"></div>
+      <button class="add-recipient-btn" onclick="addRecipientField()">＋ 送信先を追加</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeRecipientsModal()">キャンセル</button>
+      <button class="btn-primary" onclick="saveRecipients()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- プレビューモーダル -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>送信プレビュー</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <pre id="previewText"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal()">戻る</button>
+      <button class="btn-primary" onclick="sendReport()">この内容で送信</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ==========================================================
+  //  アプリ バージョン（更新時はここの数字だけ変える）
+  // ==========================================================
+  const APP_VERSION = "HYSDR_tohokuminami7.2.0";
+
+  // ==========================================================
+  //  ログインパスワード（1日1回・同日2回目以降は自動通過）
+  // ==========================================================
+  const APP_PASSWORD = "1000";
+  function todayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  }
+  function checkPassword() {
+    const input = document.getElementById("lockInput");
+    const err = document.getElementById("lockError");
+    if (input.value === APP_PASSWORD) {
+      try { localStorage.setItem("pwPassedDate", todayKey()); } catch(e) {}
+      document.getElementById("lockScreen").style.display = "none";
+    } else {
+      err.textContent = "パスワードが違います";
+      input.value = "";
+      input.focus();
+    }
+  }
+  // 起動時：同日に認証済みなら自動通過
+  (function initLock() {
+    let passed = false;
+    try { passed = (localStorage.getItem("pwPassedDate") === todayKey()); } catch(e) {}
+    if (passed) {
+      const ls = document.getElementById("lockScreen");
+      if (ls) ls.style.display = "none";
+    } else {
+      // Enterキーでログイン
+      document.addEventListener("DOMContentLoaded", () => {
+        const inp = document.getElementById("lockInput");
+        if (inp) {
+          inp.focus();
+          inp.addEventListener("keydown", e => { if (e.key === "Enter") checkPassword(); });
+        }
+      });
+    }
+  })();
+
+  // ==========================================================
+  //  GAS連携設定
+  // ==========================================================
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwwWM1XqK-MgxGS3KizjiqPoWHGo3p4cAzvn4Y17juTIG0a4T_m-iuCPwl4J4FO0W8/exec";
+
+  /**
+   * GASへGETリクエスト
+   */
+  async function gasGet(params = {}) {
+    const url = new URL(GAS_URL);
+    Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
+    const resp = await fetch(url.toString(), { method: "GET", redirect: "follow" });
+    return await resp.json();
+  }
+
+  /**
+   * GASへPOSTリクエスト
+   * Content-Typeをtext/plainにすることでCORSプリフライトを回避
+   */
+  async function gasPost(params = {}) {
+    const resp = await fetch(GAS_URL, {
+      method: "POST",
+      mode: "cors",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(params)
+    });
+    return await resp.json();
+  }
+
+  // ==========================================================
+  //  数値ステッパー（＋／－ボタン）
+  // ==========================================================
+  function stepInput(btn, delta) {
+    const input = btn.parentElement.querySelector('input[type="number"]');
+    if (!input) return;
+    let val = parseInt(input.value) || 0;
+    val = val + delta;
+    input.value = val;
+    // 変更イベントを発火させて自動計算をトリガー
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  // 数値を画面表示用にフォーマット（マイナス値は▲表記）
+  function formatNumDisplay(n) {
+    const num = parseInt(n) || 0;
+    if (num < 0) return "▲" + Math.abs(num);
+    return String(num);
+  }
+
+  // ==========================================================
+  //  通信中インジケーター
+  // ==========================================================
+  function showLoading(message) {
+    let el = document.getElementById("appLoading");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "appLoading";
+      el.style.cssText = "position:fixed;inset:0;background:rgba(32,55,100,0.6);display:flex;align-items:center;justify-content:center;z-index:500;color:#fff;font-size:14px;font-weight:600;letter-spacing:0.05em;";
+      el.innerHTML = '<div style="background:#fff;color:#203764;padding:18px 28px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.3);text-align:center;"><div style="font-size:24px;margin-bottom:6px;">⏳</div><div id="appLoadingMsg">処理中...</div></div>';
+      document.body.appendChild(el);
+    }
+    document.getElementById("appLoadingMsg").textContent = message || "処理中...";
+    el.style.display = "flex";
+  }
+  function hideLoading() {
+    const el = document.getElementById("appLoading");
+    if (el) el.style.display = "none";
+  }
+
+  const PREFECTURES = [
+    "愛知", "三重", "岐阜", "静岡",
+    "北海道", "青森", "岩手", "宮城", "秋田", "山形", "福島",
+    "茨城", "栃木", "群馬", "埼玉", "千葉", "東京", "神奈川",
+    "新潟", "富山", "石川", "福井", "山梨", "長野",
+    "滋賀", "京都", "大阪", "兵庫", "奈良", "和歌山",
+    "鳥取", "島根", "岡山", "広島", "山口",
+    "徳島", "香川", "愛媛", "高知",
+    "福岡", "佐賀", "長崎", "熊本", "大分", "宮崎", "鹿児島", "沖縄",
+    "その他"
+  ];
+
+  const TODAY_CATS = [
+    { key: "karitori", label: "刈取結果", placeholder: "" },
+    { key: "soudan", label: "相談会", placeholder: "" },
+    { key: "jsho", label: "JA紹介", placeholder: "" },
+    { key: "kakusho", label: "客紹介", placeholder: "" },
+    { key: "henshin", label: "返信/問合", placeholder: "例：返信DM JAなごや 川口様→XF960両耳 4/14納品" },
+    { key: "tsuikai", label: "追加/買替", placeholder: "" },
+    { key: "so", label: "SO", placeholder: "" },
+    { key: "seikyo", label: "生協", placeholder: "" },
+    { key: "sp", label: "SP紹介/担当者紹介/その他", placeholder: "" }
+  ];
+
+  // 本番運用ではサンプルデータは空（プロトタイプ時代の名残を整理）
+  const initialData = {
+    today: {}
+  };
+
+  function updateDate() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    const dow = ["日","月","火","水","木","金","土"][now.getDay()];
+    document.getElementById("dateDisplay").textContent = `現在時刻：${y}年${m}月${d}日(${dow}) ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+
+    const today = now.toISOString().split("T")[0];
+    document.getElementById("reportDate").value = today;
+
+    const next = new Date(now);
+    next.setDate(next.getDate() + 1);
+    if (next.getDay() === 0) next.setDate(next.getDate() + 1);
+    if (next.getDay() === 6) next.setDate(next.getDate() + 2);
+    document.getElementById("nextDate").value = next.toISOString().split("T")[0];
+    updateNextWeekday();
+  }
+  updateDate();
+
+  // アプリバージョンを画面に表示
+  (function showAppVersion() {
+    const el = document.getElementById("appVersion");
+    if (el) el.textContent = APP_VERSION;
+  })();
+
+  // 翌営業日の曜日表示更新
+  function updateNextWeekday() {
+    const el = document.getElementById("nextDate");
+    const display = document.getElementById("nextDateWeekday");
+    if (!el || !display) return;
+    const v = el.value;
+    if (!v) { display.textContent = ""; return; }
+    const parts = v.split("-");
+    if (parts.length !== 3) { display.textContent = ""; return; }
+    const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    const dow = ["日","月","火","水","木","金","土"][d.getDay()];
+    display.textContent = `(${dow})`;
+  }
+  // 日付変更時に連動
+  document.getElementById("nextDate").addEventListener("change", updateNextWeekday);
+  updateNextWeekday();
+
+  function toggleSection(id) { document.getElementById(id).classList.toggle("collapsed"); }
+  function toggleSubSection(id) { document.getElementById(id).classList.toggle("collapsed"); }
+
+  // ===== ヘッダー開閉 =====
+  function toggleHeader() {
+    document.getElementById("appHeader").classList.toggle("collapsed");
+  }
+
+  // スクロールで自動折り畳み
+  let lastScrollY = 0;
+  window.addEventListener("scroll", () => {
+    const sy = window.scrollY;
+    const header = document.getElementById("appHeader");
+    if (sy > 80 && sy > lastScrollY) {
+      header.classList.add("collapsed");
+    }
+    lastScrollY = sy;
+  }, { passive: true });
+
+  // ===== 送信先管理 =====
+  let recipients = [];
+
+  // 注：loadRecipients()は applyUserInfo() で代替されるため未使用化
+  // 以前のwindow.storageベースから、社員マスタ参照型に移行
+
+  function updateRecipientsSummary() {
+    const summary = document.getElementById("recipientsSummary");
+    if (recipients.length === 0) {
+      summary.textContent = "未設定（タップして追加）";
+      summary.style.color = "#FFB6CC";
+    } else if (recipients.length === 1) {
+      summary.textContent = recipients[0];
+      summary.style.color = "";
+    } else {
+      summary.textContent = `${recipients[0]} 他${recipients.length - 1}件`;
+      summary.style.color = "";
+    }
+  }
+
+  function openRecipientsModal() {
+    const list = document.getElementById("recipientsList");
+    list.innerHTML = "";
+    if (recipients.length === 0) {
+      addRecipientField();
+    } else {
+      recipients.forEach(email => addRecipientField(email));
+    }
+    document.getElementById("recipientsModal").classList.add("show");
+  }
+
+  function closeRecipientsModal() {
+    document.getElementById("recipientsModal").classList.remove("show");
+  }
+
+  function addRecipientField(email = "") {
+    const list = document.getElementById("recipientsList");
+    const div = document.createElement("div");
+    div.className = "recipient-item";
+    div.innerHTML = `
+      <input type="email" placeholder="例：sample@example.com" value="${email}">
+      <button class="delete-btn" onclick="this.parentElement.remove()">×</button>
+    `;
+    list.appendChild(div);
+    if (!email) div.querySelector("input").focus();
+  }
+
+  async function saveRecipients() {
+    const inputs = document.querySelectorAll("#recipientsList input[type='email']");
+    const newRecipients = [];
+    for (const input of inputs) {
+      const v = input.value.trim();
+      if (v) {
+        if (!v.includes("@") || !v.includes(".")) {
+          showToast(`メールアドレスの形式が正しくありません：${v}`);
+          return;
+        }
+        newRecipients.push(v);
+      }
+    }
+    showLoading("送信先を保存中...");
+    try {
+      const userName = document.getElementById("userSelect").value;
+      const result = await gasPost({
+        action: "saveRecipients",
+        user: userName,
+        recipients: newRecipients
+      });
+      if (result && result.success) {
+        recipients = newRecipients;
+        updateRecipientsSummary();
+        closeRecipientsModal();
+        showToast("送信先を保存しました");
+      } else {
+        showToast("保存に失敗：" + (result && result.error || ""));
+      }
+    } catch (e) {
+      showToast("通信エラー：" + e.message);
+    } finally {
+      hideLoading();
+    }
+  }
+
+  // ===== 本日の商談 =====
+  function buildTodaySection() {
+    const body = document.getElementById("today-body");
+    body.innerHTML = "";
+    TODAY_CATS.forEach(cat => {
+      const div = document.createElement("div");
+      div.className = "today-cat";
+      div.dataset.catKey = cat.key;
+      div.innerHTML = `
+        <div class="today-cat-header">
+          <label><span class="cat-icon">●</span>${cat.label}</label>
+          <button class="add-sub-btn" onclick="addTodayItem('${cat.key}')">＋ 追加</button>
+        </div>
+        <div class="today-sub-list" id="today-${cat.key}-list"></div>
+      `;
+      body.appendChild(div);
+
+      const items = (initialData.today && initialData.today[cat.key]) || [];
+      if (items.length > 0) {
+        items.forEach(t => addTodayItem(cat.key, t));
+      } else {
+        addTodayItem(cat.key, "");
+      }
+    });
+  }
+
+  function addTodayItem(catKey, text = "") {
+    const list = document.getElementById(`today-${catKey}-list`);
+    const cat = TODAY_CATS.find(c => c.key === catKey);
+    const ph = cat ? cat.placeholder : "";
+    const div = document.createElement("div");
+    div.className = "today-sub-item";
+    div.innerHTML = `
+      <span class="bullet">・</span>
+      <textarea placeholder="${ph}">${text}</textarea>
+      <button class="delete-btn" onclick="this.parentElement.remove(); updateAllCounts();">×</button>
+    `;
+    list.appendChild(div);
+    const ta = div.querySelector("textarea");
+    ta.addEventListener("input", function() {
+      this.style.height = "auto";
+      this.style.height = (this.scrollHeight) + "px";
+      updateAllCounts();
+    });
+    setTimeout(() => {
+      ta.style.height = "auto";
+      ta.style.height = (ta.scrollHeight) + "px";
+    }, 0);
+    updateAllCounts();
+  }
+
+  // ===== リスト項目 =====
+  // カテゴリ別のプルダウン定義
+  // 案件結果プルダウンの選択肢（先頭の空＝未選択）
+  const RESULT_OPTIONS = ["", "契約", "再訪", "貸出", "SO", "アポCAN", "電話のみ", "保留/後追", "未計上", "CAN", "他"];
+  const RESULT_DROPDOWN = { name: "result", options: RESULT_OPTIONS };
+
+  const LIST_CATEGORY_DROPDOWNS = {
+    raijo: [
+      { name: "apo", options: ["", "サポAPO"] },
+      RESULT_DROPDOWN
+    ],
+    raijoSeikyo: [
+      { name: "apo", options: ["", "サポAPO"] },
+      RESULT_DROPDOWN
+    ],
+    jaSyokai: [
+      { name: "kind", options: ["JA紹介", "客紹介"] },
+      RESULT_DROPDOWN
+    ],
+    jaPlain: [
+      RESULT_DROPDOWN
+    ],
+    seikyoSyokai: [
+      { name: "kind", options: ["客紹介", "生協紹"] },
+      RESULT_DROPDOWN
+    ],
+    seikyoPlain: [
+      RESULT_DROPDOWN
+    ],
+    jaSP: [
+      { name: "kind", options: ["SP紹", "担当紹", "他"] },
+      RESULT_DROPDOWN
+    ],
+    seikyoSP: [
+      { name: "kind", options: ["SP紹", "担当紹", "他"] },
+      RESULT_DROPDOWN
+    ]
+  };
+
+  // 結果値 → CSSクラス（色分け）
+  const RESULT_COLOR_CLASS = {
+    "契約": "res-keiyaku",      // 薄ピンク
+    "再訪": "res-green",        // 薄グリーン
+    "貸出": "res-green",        // 薄グリーン
+    "SO": "res-gray",           // 薄グレー
+    "アポCAN": "res-gray",      // 薄グレー
+    "電話のみ": "res-gray",     // 薄グレー
+    "保留/後追": "res-beige",   // ベージュ
+    "未計上": "res-keiyaku",    // 薄ピンク
+    "CAN": "res-gray",          // 薄グレー
+    "他": "res-beige"           // ベージュ
+  };
+
+  // カテゴリ別のプレースホルダー（例文）
+  const LIST_CATEGORY_PLACEHOLDERS = {
+    raijo: "",
+    raijoSeikyo: "",
+    jaSyokai: "",
+    jaPlain: "",
+    seikyoSyokai: "",
+    seikyoPlain: "",
+    jaSP: "",
+    seikyoSP: ""
+  };
+
+  function createListItem(text = "", type = "", showSeq = true, category = "", dropdownValues = {}) {
+    const div = document.createElement("div");
+    div.className = "list-item" + (type ? " " + type : "");
+    if (category) div.dataset.category = category;
+
+    // プルダウン部分のHTML
+    let dropdownsHtml = "";
+    const dropdowns = LIST_CATEGORY_DROPDOWNS[category] || [];
+    dropdowns.forEach(dd => {
+      const selected = dropdownValues[dd.name] || dd.options[0];
+      dropdownsHtml += `<select class="list-dropdown" data-name="${dd.name}">`;
+      dd.options.forEach(opt => {
+        dropdownsHtml += `<option value="${opt}"${opt === selected ? " selected" : ""}>${opt || "—"}</option>`;
+      });
+      dropdownsHtml += `</select>`;
+    });
+
+    // プレースホルダー
+    const placeholder = LIST_CATEGORY_PLACEHOLDERS[category] || "";
+
+    div.innerHTML = `
+      ${showSeq ? '<span class="seq-num"></span>' : ''}
+      <span class="result-mark"></span>
+      ${dropdownsHtml}
+      <textarea placeholder="${placeholder}">${text}</textarea>
+      <button class="delete-btn" onclick="removeListItem(this)">×</button>
+    `;
+    const textarea = div.querySelector("textarea");
+    textarea.addEventListener("input", function() {
+      this.style.height = "auto";
+      this.style.height = (this.scrollHeight) + "px";
+      renumberAll();
+      updateAllCounts();
+    });
+    // 結果プルダウンの値で色付け＆赤〇表示を更新
+    function applyResultStyle() {
+      const resultSel = div.querySelector('.list-dropdown[data-name="result"]');
+      const resultVal = resultSel ? resultSel.value : "";
+      // 色クラスをリセット
+      div.classList.remove("res-keiyaku", "res-green", "res-gray", "res-beige", "res-none");
+      if (!resultVal) {
+        // 未選択 → 識別カラー
+        div.classList.add("res-none");
+      } else {
+        const cls = RESULT_COLOR_CLASS[resultVal];
+        if (cls) div.classList.add(cls);
+      }
+      // 契約マーク（⭕️）の表示
+      const mark = div.querySelector(".result-mark");
+      if (mark) mark.textContent = (resultVal === "契約") ? "⭕️" : "";
+    }
+    // プルダウン変更で色付け＆再集計
+    div.querySelectorAll(".list-dropdown").forEach(sel => {
+      sel.addEventListener("change", () => {
+        applyResultStyle();
+        updateAllCounts();
+      });
+    });
+    // 初期表示時にも色付けを適用
+    applyResultStyle();
+    setTimeout(() => {
+      textarea.style.height = "auto";
+      textarea.style.height = (textarea.scrollHeight) + "px";
+    }, 0);
+    return div;
+  }
+
+  function removeListItem(btn) {
+    btn.parentElement.remove();
+    renumberAll();
+    updateAllCounts();
+  }
+
+  // listId からカテゴリを判定
+  function getCategoryByListId(listId) {
+    if (listId === "raijo-seikyo-list") return "raijoSeikyo";
+    if (listId === "srespJ-list") return "seikyoSyokai";
+    if (listId === "srespS-list") return "seikyoSP";
+    // 生協返信・問合（プルダウン無しだがプレースホルダー用）
+    if (listId === "srespH-list" || listId === "srespT-list") return "seikyoPlain";
+    return "";
+  }
+
+  function addItemToList(listId, showSeq = true) {
+    const list = document.getElementById(listId);
+    const category = getCategoryByListId(listId);
+    const item = createListItem("", "", showSeq, category, {});
+    list.appendChild(item);
+    item.querySelector("textarea").focus();
+    renumberAll();
+    updateAllCounts();
+  }
+
+  // ===== 相談会専用アイテム =====
+  function createMeetItem(data = {}, isSeikyo = false) {
+    const div = document.createElement("div");
+    div.className = "meet-item";
+    const venueOpt = data.venueType || "";
+    const venuePlaceholder = isSeikyo ? "例：コープあいち○○○" : "例：JAなごや○○○";
+    div.innerHTML = `
+      <span class="seq-num"></span>
+      <select class="meet-venue-type list-dropdown" data-name="venueType">
+        <option value=""${venueOpt === "" ? " selected" : ""}>—</option>
+        <option value="サポ会場"${venueOpt === "サポ会場" ? " selected" : ""}>サポ会場</option>
+      </select>
+      <input type="text" class="meet-date" placeholder="4/15" value="${data.date || ''}">
+      <input type="text" class="meet-venue" placeholder="${venuePlaceholder}" value="${data.venue || ''}">
+      <div class="meet-num-group">
+        <span class="meet-num-label">新規</span>
+        <div class="meet-stepper">
+          <button type="button" class="meet-stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+          <input type="number" class="meet-num shinki" value="${data.shinki !== undefined ? data.shinki : 0}" inputmode="numeric">
+          <button type="button" class="meet-stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+        </div>
+        <span class="meet-num-label">名</span>
+      </div>
+      <div class="meet-num-group">
+        <span class="meet-num-label">顧客</span>
+        <div class="meet-stepper">
+          <button type="button" class="meet-stepper-btn minus" onclick="stepInput(this,-1)">−</button>
+          <input type="number" class="meet-num koukyaku" value="${data.koukyaku !== undefined ? data.koukyaku : 0}" inputmode="numeric">
+          <button type="button" class="meet-stepper-btn plus" onclick="stepInput(this,1)">＋</button>
+        </div>
+        <span class="meet-num-label">名</span>
+      </div>
+      <button class="delete-btn" onclick="removeMeetItem(this)">×</button>
+    `;
+    div.querySelectorAll("input").forEach(inp => {
+      inp.addEventListener("input", () => {
+        renumberAll();
+        updateAllCounts();
+      });
+    });
+    div.querySelector(".meet-venue-type").addEventListener("change", () => {
+      updateAllCounts();
+    });
+    return div;
+  }
+
+  function removeMeetItem(btn) {
+    btn.parentElement.remove();
+    renumberAll();
+    updateAllCounts();
+  }
+
+  function addMeetItemToList(listId) {
+    const list = document.getElementById(listId);
+    const isSeikyo = listId === "meet-seikyo-list";
+    const item = createMeetItem({}, isSeikyo);
+    list.appendChild(item);
+    item.querySelector(".meet-date").focus();
+    renumberAll();
+    updateAllCounts();
+  }
+
+  // ===== 県別ブロック =====
+  // sectionType からカテゴリを判定
+  function getCategoryBySectionType(sectionType) {
+    if (sectionType === "raijo") return "raijo";
+    if (sectionType === "respJ") return "jaSyokai";
+    if (sectionType === "respS") return "jaSP";
+    // 返信・問合（プルダウン無しだがプレースホルダー用）
+    if (sectionType === "respH" || sectionType === "respT") return "jaPlain";
+    return "";
+  }
+
+  function addPrefBlock(sectionType, defaultPref = null, items = []) {
+    const container = document.getElementById(`${sectionType}-pref-blocks`);
+    const usedPrefs = Array.from(container.querySelectorAll(".pref-select")).map(s => s.value);
+    let pref = defaultPref;
+    if (!pref) {
+      pref = PREFECTURES.find(p => !usedPrefs.includes(p)) || PREFECTURES[0];
+    }
+    const blockId = `${sectionType}-pref-${Date.now()}-${Math.floor(Math.random()*1000)}`;
+    const isMeet = sectionType === "meet";
+    const showSeq = !isMeet;
+    const category = getCategoryBySectionType(sectionType);
+
+    const block = document.createElement("div");
+    block.className = "list-area";
+    block.dataset.blockId = blockId;
+    const labelText = isMeet ? '相談会' : sectionType === 'raijo' ? '来場記録' : '案件';
+    const subCountClass = isMeet ? 'sub-count meet-count' : 'sub-count';
+    const subCountText = isMeet ? '0会場 新規0名・顧客0名' : '0件';
+
+    block.innerHTML = `
+      <div class="list-area-title">
+        <span>《<select class="pref-select" onchange="updateAllCounts()">${
+          PREFECTURES.map(p => `<option value="${p}" ${p===pref?'selected':''}>${p}</option>`).join("")
+        }</select>》</span>
+        <div class="pref-block-actions">
+          <span class="${subCountClass}">${subCountText}</span>
+          <button class="pref-remove-btn" onclick="removePrefBlock('${blockId}')">×</button>
+        </div>
+      </div>
+      <div class="pref-list" data-section-type="${sectionType}"></div>
+      <button class="add-btn">＋ ${labelText}を追加</button>
+    `;
+    container.appendChild(block);
+    const list = block.querySelector(".pref-list");
+
+    items.forEach(item => {
+      if (isMeet) {
+        list.appendChild(createMeetItem(item));
+      } else {
+        if (typeof item === "string") {
+          list.appendChild(createListItem(item, "", showSeq, category, {}));
+        } else {
+          list.appendChild(createListItem(item.text, item.type, showSeq, category, item.dropdownValues || {}));
+        }
+      }
+    });
+
+    block.querySelector(".add-btn").addEventListener("click", () => {
+      if (isMeet) {
+        const newItem = createMeetItem({});
+        list.appendChild(newItem);
+        newItem.querySelector(".meet-date").focus();
+      } else {
+        const newItem = createListItem("", "", showSeq, category, {});
+        list.appendChild(newItem);
+        newItem.querySelector("textarea").focus();
+      }
+      renumberAll();
+      updateAllCounts();
+    });
+
+    renumberAll();
+    updateAllCounts();
+  }
+
+  function removePrefBlock(blockId) {
+    if (!confirm("この県のブロックを削除しますか？")) return;
+    const block = document.querySelector(`[data-block-id="${blockId}"]`);
+    if (block) block.remove();
+    updateAllCounts();
+  }
+
+  // ===== 連番再採番 =====
+  function renumberList(list) {
+    const sectionType = list.dataset.sectionType;
+    let seq = 1;
+    if (sectionType === "meet") {
+      // 相談会も連番を振る
+      list.querySelectorAll(":scope > .meet-item").forEach(item => {
+        const seqEl = item.querySelector(".seq-num");
+        if (!seqEl) return;
+        seqEl.textContent = `${seq}.`;
+        seq++;
+      });
+      return;
+    }
+    list.querySelectorAll(":scope > .list-item").forEach(item => {
+      const seqEl = item.querySelector(".seq-num");
+      if (!seqEl) return;
+      const txt = item.querySelector("textarea").value;
+      if (txt.startsWith("※")) {
+        seqEl.textContent = "※";
+      } else {
+        seqEl.textContent = `${seq}.`;
+        seq++;
+      }
+    });
+  }
+  function renumberAll() {
+    document.querySelectorAll(".pref-list").forEach(renumberList);
+    // 生協リスト（来場相談会・生協大項目4小項目）
+    ["raijo-seikyo-list", "srespH-list", "srespT-list", "srespJ-list", "srespS-list"].forEach(id => {
+      const list = document.getElementById(id);
+      if (list) {
+        list.dataset.sectionType = "seikyo";
+        renumberList(list);
+      }
+    });
+    // 相談会の生協
+    const meetSeikyo = document.getElementById("meet-seikyo-list");
+    if (meetSeikyo) {
+      meetSeikyo.dataset.sectionType = "meet";
+      renumberList(meetSeikyo);
+    }
+  }
+
+  // ===== 件数カウント =====
+  function countListItems(list) {
+    return Array.from(list.querySelectorAll(":scope > .list-item")).filter(item => {
+      const t = item.querySelector("textarea");
+      return t && t.value.trim().length > 0;
+    }).length;
+  }
+  // ※付きと連番（今月）の件数を分けてカウント
+  function countListItemsByType(list) {
+    let asterisk = 0, numbered = 0;
+    list.querySelectorAll(":scope > .list-item").forEach(item => {
+      const t = item.querySelector("textarea");
+      if (!t || !t.value.trim()) return;
+      if (t.value.trim().startsWith("※")) asterisk++;
+      else numbered++;
+    });
+    return { asterisk, numbered };
+  }
+  function countMeetItems(list) {
+    let count = 0, shinki = 0, koukyaku = 0, support = 0;
+    list.querySelectorAll(":scope > .meet-item").forEach(item => {
+      const venue = item.querySelector(".meet-venue").value.trim();
+      const sN = parseInt(item.querySelector(".meet-num.shinki").value) || 0;
+      const kN = parseInt(item.querySelector(".meet-num.koukyaku").value) || 0;
+      const venueType = (item.querySelector(".meet-venue-type") || {}).value || "";
+      if (venue.length > 0) {
+        count++;
+        shinki += sN;
+        koukyaku += kN;
+        if (venueType === "サポ会場") support++;
+      }
+    });
+    return { count, shinki, koukyaku, support };
+  }
+
+  // 月内累計のベース値（前日までの累計）。applyPreviousDataで設定
+  let perfMonthlyBase = {
+    kyakuTotal: 0, kyakuNew: 0,
+    shodanTotal: 0, shodanNew: 0,
+    shichoTotal: 0, shichoNew: 0,
+    keiyakuTotal: 0, keiyakuNew: 0,
+    canTotal: 0, canNew: 0,
+    nohinTotal: 0, nohinNew: 0
+  };
+
+  // 月内累計表示を更新（ベース＋当日入力分）
+  function updatePerfMonthly() {
+    const todayMap = {
+      kyakuTotal:   "perf-kyaku-total",
+      kyakuNew:     "perf-kyaku-new",
+      shodanTotal:  "perf-shodan-total",
+      shodanNew:    "perf-shodan-new",
+      shichoTotal:  "perf-shicho-total",
+      shichoNew:    "perf-shicho-new",
+      keiyakuTotal: "perf-keiyaku-total",
+      keiyakuNew:   "perf-keiyaku-new",
+      canTotal:     "perf-can-total",
+      canNew:       "perf-can-new",
+      nohinTotal:   "perf-nohin-total",
+      nohinNew:     "perf-nohin-new"
+    };
+    const displayMap = {
+      kyakuTotal:   "perf-month-kyaku-total",
+      kyakuNew:     "perf-month-kyaku-new",
+      shodanTotal:  "perf-month-shodan-total",
+      shodanNew:    "perf-month-shodan-new",
+      shichoTotal:  "perf-month-shicho-total",
+      shichoNew:    "perf-month-shicho-new",
+      keiyakuTotal: "perf-month-keiyaku-total",
+      keiyakuNew:   "perf-month-keiyaku-new",
+      canTotal:     "perf-month-can-total",
+      canNew:       "perf-month-can-new",
+      nohinTotal:   "perf-month-nohin-total",
+      nohinNew:     "perf-month-nohin-new"
+    };
+    Object.keys(todayMap).forEach(key => {
+      const todayEl = document.getElementById(todayMap[key]);
+      const todayVal = todayEl ? (parseInt(todayEl.value) || 0) : 0;
+      const total = (perfMonthlyBase[key] || 0) + todayVal;
+      const disp = document.getElementById(displayMap[key]);
+      if (disp) disp.textContent = formatNumDisplay(total);
+    });
+  }
+
+  function updateAllCounts() {
+    // 本日の商談
+    const todayCount = Array.from(document.querySelectorAll(".today-sub-item textarea"))
+      .filter(t => t.value.trim().length > 0).length;
+    document.getElementById("badge-today").textContent = todayCount;
+
+    // 月間累計：自動計算（カテゴリ別内訳付き）
+    const calcArea = (area) => {
+      let total = 0, shinki = 0, repeat = 0, other = 0;
+      document.querySelectorAll(`input[data-area="${area}"]`).forEach(i => {
+        const val = parseInt(i.value) || 0;
+        const cat = i.dataset.cat;
+        total += val;
+        if (cat === "shinki") shinki += val;
+        else if (cat === "repeat") repeat += val;
+        else if (cat === "other") other += val;
+      });
+      return { total, shinki, repeat, other };
+    };
+    const aichiCalc = calcArea("aichi");
+    const seikyoCalc = calcArea("seikyo");
+    const aichiTotal = aichiCalc.total;
+    const seikyoTotal = seikyoCalc.total;
+    const grandTotal = aichiTotal + seikyoTotal;
+    document.getElementById("aichi-subtotal").innerHTML = `合計商談 ${formatNumDisplay(aichiTotal)}件<span class="breakdown">(新規${formatNumDisplay(aichiCalc.shinki)}件、リピート${formatNumDisplay(aichiCalc.repeat)}件、その他${formatNumDisplay(aichiCalc.other)}件)</span>`;
+    document.getElementById("seikyo-subtotal").innerHTML = `合計商談 ${formatNumDisplay(seikyoTotal)}件<span class="breakdown">(新規${formatNumDisplay(seikyoCalc.shinki)}件、リピート${formatNumDisplay(seikyoCalc.repeat)}件、その他${formatNumDisplay(seikyoCalc.other)}件)</span>`;
+    document.getElementById("totalDisplay").textContent = formatNumDisplay(grandTotal);
+    document.getElementById("badge-count").textContent = formatNumDisplay(grandTotal);
+
+    // 相談会
+    let meetCount = 0, meetShinki = 0, meetKoukyaku = 0, meetSupport = 0;
+    const meetContainer = document.getElementById("meet-pref-blocks");
+    if (meetContainer) {
+      meetContainer.querySelectorAll(".list-area").forEach(block => {
+        const list = block.querySelector(".pref-list");
+        const r = countMeetItems(list);
+        block.querySelector(".sub-count").textContent = `${r.count}会場 新規${r.shinki}名・顧客${r.koukyaku}名`;
+        meetCount += r.count;
+        meetShinki += r.shinki;
+        meetKoukyaku += r.koukyaku;
+        meetSupport += r.support;
+      });
+    }
+    // ヘッダーバッジ：JA（県）合計のみ
+    document.getElementById("badge-meet").textContent = meetCount;
+    document.getElementById("badge-meet-shinki").textContent = meetShinki;
+    document.getElementById("badge-meet-koukyaku").textContent = meetKoukyaku;
+    const supportEl = document.getElementById("badge-meet-support");
+    if (supportEl) supportEl.textContent = meetSupport;
+    // 生協ブロック横：生協のみ表示
+    const meetSeikyoList = document.getElementById("meet-seikyo-list");
+    if (meetSeikyoList) {
+      const r = countMeetItems(meetSeikyoList);
+      document.getElementById("cnt-meet-seikyo").textContent = `生協${r.count}会場（内サポ会場 ${r.support}）、新規${r.shinki}名、顧客${r.koukyaku}名`;
+    }
+
+    // 来場・JA新規
+    const respSections = ["raijo", "respH", "respT", "respJ", "respS"];
+    const sectionBadges = {
+      "raijo": "badge-raijo",
+      "respH": "badge-respH",
+      "respT": "badge-respT",
+      "respJ": "badge-respJ",
+      "respS": "badge-respS"
+    };
+
+    let respJAAst = 0, respJANum = 0;
+
+    respSections.forEach(secType => {
+      let total = 0, totalAst = 0, totalNum = 0;
+      const container = document.getElementById(`${secType}-pref-blocks`);
+      if (container) {
+        container.querySelectorAll(".list-area").forEach(block => {
+          const list = block.querySelector(".pref-list");
+          const cnt = countListItems(list);
+          const byType = countListItemsByType(list);
+          block.querySelector(".sub-count").textContent = `${cnt}件`;
+          total += cnt;
+          totalAst += byType.asterisk;
+          totalNum += byType.numbered;
+        });
+      }
+      if (secType === "raijo") {
+        // 来場：badge-raijo は今月（JA）、badge-raijo-ast は※
+        document.getElementById("badge-raijo").textContent = totalNum;
+        document.getElementById("badge-raijo-ast").textContent = totalAst;
+        // 生協来場ブロック側
+        const seikyoList = document.getElementById("raijo-seikyo-list");
+        if (seikyoList) {
+          // 生協の※/今月とサポAPO件数を集計
+          let seikyoAst = 0, seikyoNum = 0, seikyoSupportApo = 0;
+          seikyoList.querySelectorAll(":scope > .list-item").forEach(item => {
+            const ta = item.querySelector("textarea");
+            if (!ta || !ta.value.trim()) return;
+            if (ta.value.trim().startsWith("※")) seikyoAst++;
+            else seikyoNum++;
+            const apoSel = item.querySelector('select[data-name="apo"]');
+            if (apoSel && apoSel.value === "サポAPO") seikyoSupportApo++;
+          });
+          document.getElementById("cnt-raijo-seikyo").textContent = `生協※${seikyoAst}件・生協今月${seikyoNum}件（内サポAPO ${seikyoSupportApo}件）`;
+        }
+      } else {
+        document.getElementById(sectionBadges[secType]).textContent = total;
+      }
+      if (secType.startsWith("resp")) {
+        respJAAst += totalAst;
+        respJANum += totalNum;
+      }
+    });
+    // JA《新規》ヘッダーバッジ：※と今月
+    document.getElementById("badge-resp").textContent = respJANum;
+    const respAstEl = document.getElementById("badge-resp-ast");
+    if (respAstEl) respAstEl.textContent = respJAAst;
+
+    // 生協《新規》各小項目（県別ブロックではなく直下リスト）
+    const srespSubs = ["srespH", "srespT", "srespJ", "srespS"];
+    let srespTotal = 0, srespAst = 0, srespNum = 0;
+    srespSubs.forEach(secType => {
+      const list = document.getElementById(`${secType}-list`);
+      let cnt = 0;
+      if (list) {
+        cnt = countListItems(list);
+        const byType = countListItemsByType(list);
+        srespAst += byType.asterisk;
+        srespNum += byType.numbered;
+      }
+      const badge = document.getElementById(`badge-${secType}`);
+      if (badge) badge.textContent = cnt;
+      srespTotal += cnt;
+    });
+    document.getElementById("badge-sresp").textContent = srespNum;
+    const srespAstEl = document.getElementById("badge-sresp-ast");
+    if (srespAstEl) srespAstEl.textContent = srespAst;
+
+    // ===== 各セクション内訳の集計（プルダウン値による） =====
+    // breakdown-respJ: JA紹介・客紹介
+    countDropdownBreakdown("respJ", "kind", ["JA紹介", "客紹介"], "breakdown-respJ");
+    // breakdown-respS: SP紹・担当紹・他
+    countDropdownBreakdown("respS", "kind", ["SP紹", "担当紹", "他"], "breakdown-respS",
+      ["SP紹介", "担当者紹介", "他"]);
+    // breakdown-srespJ: 生協紹・客紹介
+    countDropdownBreakdownList("srespJ-list", "kind", ["生協紹", "客紹介"], "breakdown-srespJ",
+      ["生協紹介", "客紹介"]);
+    // breakdown-srespS: SP紹・担当紹・他
+    countDropdownBreakdownList("srespS-list", "kind", ["SP紹", "担当紹", "他"], "breakdown-srespS",
+      ["SP紹介", "担当者紹介", "他"]);
+    // breakdown-raijo: 内サポAPO
+    countRaijoBreakdown();
+
+    const stockCount = Array.from(document.querySelectorAll("#stock-list input"))
+      .filter(i => i.value.trim().length > 0).length;
+    document.getElementById("badge-stock").textContent = stockCount;
+  }
+
+  // 県別ブロックを横断してプルダウン値ごとの件数を集計
+  function countDropdownBreakdown(sectionType, ddName, options, breakdownId, displayLabels) {
+    const counts = {};
+    options.forEach(o => counts[o] = 0);
+    const container = document.getElementById(`${sectionType}-pref-blocks`);
+    if (container) {
+      container.querySelectorAll(".list-item").forEach(item => {
+        const ta = item.querySelector("textarea");
+        if (!ta || !ta.value.trim()) return;
+        const sel = item.querySelector(`select[data-name="${ddName}"]`);
+        if (sel && counts[sel.value] !== undefined) counts[sel.value]++;
+      });
+    }
+    const labels = displayLabels || options;
+    const text = "（" + options.map((o, i) => `${labels[i]}${counts[o]}件`).join("、") + "）";
+    const el = document.getElementById(breakdownId);
+    if (el) el.textContent = text;
+  }
+
+  // 単独リストでプルダウン値ごとの件数を集計
+  function countDropdownBreakdownList(listId, ddName, options, breakdownId, displayLabels) {
+    const counts = {};
+    options.forEach(o => counts[o] = 0);
+    const list = document.getElementById(listId);
+    if (list) {
+      list.querySelectorAll(".list-item").forEach(item => {
+        const ta = item.querySelector("textarea");
+        if (!ta || !ta.value.trim()) return;
+        const sel = item.querySelector(`select[data-name="${ddName}"]`);
+        if (sel && counts[sel.value] !== undefined) counts[sel.value]++;
+      });
+    }
+    const labels = displayLabels || options;
+    const text = "（" + options.map((o, i) => `${labels[i]}${counts[o]}件`).join("、") + "）";
+    const el = document.getElementById(breakdownId);
+    if (el) el.textContent = text;
+  }
+
+  // 新規来場：内サポAPO件数の集計
+  function countRaijoBreakdown() {
+    let supportApo = 0;
+    // 県別ブロック（JA）のみ
+    const container = document.getElementById("raijo-pref-blocks");
+    if (container) {
+      container.querySelectorAll(".list-item").forEach(item => {
+        const ta = item.querySelector("textarea");
+        if (!ta || !ta.value.trim()) return;
+        const apoSel = item.querySelector('select[data-name="apo"]');
+        if (apoSel && apoSel.value === "サポAPO") supportApo++;
+      });
+    }
+    // ヘッダーバッジ（JAのみ）
+    const badgeEl = document.getElementById("badge-raijo-support");
+    if (badgeEl) badgeEl.textContent = supportApo;
+  }
+
+  function addStock(text = "") {
+    const list = document.getElementById("stock-list");
+    const div = document.createElement("div");
+    div.className = "stock-item";
+    div.innerHTML = `
+      <input type="text" placeholder="例：XF777-DWC ×2台" value="${text}">
+      <button class="delete-btn" onclick="this.parentElement.remove(); updateAllCounts();">×</button>
+    `;
+    list.appendChild(div);
+    div.querySelector("input").addEventListener("input", updateAllCounts);
+    if (!text) div.querySelector("input").focus();
+    updateAllCounts();
+  }
+
+  // エリア内在庫データ（メール本文構築時に使用）
+  let areaStocksData = [];
+
+  // ===== 報告者変更時の処理 =====
+  async function onUserChanged() {
+    const userName = document.getElementById("userSelect").value;
+    showLoading(userName + " さんのデータを読込中...");
+    try {
+      const division = (document.getElementById("divisionSelect") || {}).value || "";
+      const result = await gasGet({ action: "getUserData", user: userName, division: division });
+      if (result && result.success) {
+        applyPreviousData(result.previousData);
+        applyUserInfo(result.userInfo);
+        areaStocksData = Array.isArray(result.areaStocks) ? result.areaStocks : [];
+        // 当日の下書きがあれば復元（本日の商談・メモ・翌営業日の予定）
+        restoreDraft();
+      }
+    } catch (err) {
+      showToast("データ取得に失敗しました: " + err.message);
+    } finally {
+      hideLoading();
+    }
+  }
+
+  // ===== 前日データを画面に反映 =====
+  function applyPreviousData(prev) {
+    if (!prev) {
+      // 新規社員：すべて0、空に
+      resetAllInputs();
+      return;
+    }
+    // 数値カウント
+    const counts = prev.counts || {};
+    document.querySelectorAll("input[data-key]").forEach(input => {
+      const key = input.dataset.key;
+      if (counts[key] !== undefined && counts[key] !== null) {
+        input.value = Number(counts[key]) || 0;
+      } else if (counts !== null) {
+        input.value = 0;
+      }
+    });
+    // 月跨ぎなら全て0
+    if (!prev.sameMonth) {
+      document.querySelectorAll("input[data-key]").forEach(i => i.value = 0);
+    }
+    // 現在の売上（今月は月跨ぎでリセット、前月繰越・来月繰越は引き継ぎ）
+    const sales = prev.sales || { prevCarry: 0, thisJA: 0, thisSeikyo: 0, nextMonth: 0 };
+    const elPv = document.getElementById("sales-prev-carry");
+    const elJA = document.getElementById("sales-this-ja");
+    const elSk = document.getElementById("sales-this-seikyo");
+    const elNx = document.getElementById("sales-next-month");
+    if (elPv) elPv.value = Number(sales.prevCarry) || 0;
+    if (elJA) elJA.value = Number(sales.thisJA) || 0;
+    if (elSk) elSk.value = Number(sales.thisSeikyo) || 0;
+    if (elNx) elNx.value = Number(sales.nextMonth) || 0;
+
+    // 実績件数（当日分）：常に0スタート（前日引継しない）
+    [
+      "perf-kyaku-total", "perf-kyaku-new",
+      "perf-shodan-total", "perf-shodan-new",
+      "perf-shicho-total", "perf-shicho-new",
+      "perf-keiyaku-total", "perf-keiyaku-new",
+      "perf-can-total", "perf-can-new",
+      "perf-nohin-total", "perf-nohin-new"
+    ].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = 0;
+    });
+
+    // 月内累計：同月内は前日累計＋前日当日分を引き継ぐ、月跨ぎでリセット
+    // 客数・商談・試聴・契約・契約CAN・納品の6項目
+    const perfMonthly = prev.perfMonthly || {};
+    if (prev.sameMonth) {
+      perfMonthlyBase = {
+        kyakuTotal:   Number(perfMonthly.kyakuTotal)   || 0,
+        kyakuNew:     Number(perfMonthly.kyakuNew)     || 0,
+        shodanTotal:  Number(perfMonthly.shodanTotal)  || 0,
+        shodanNew:    Number(perfMonthly.shodanNew)    || 0,
+        shichoTotal:  Number(perfMonthly.shichoTotal)  || 0,
+        shichoNew:    Number(perfMonthly.shichoNew)    || 0,
+        keiyakuTotal: Number(perfMonthly.keiyakuTotal) || 0,
+        keiyakuNew:   Number(perfMonthly.keiyakuNew)   || 0,
+        canTotal:     Number(perfMonthly.canTotal)     || 0,
+        canNew:       Number(perfMonthly.canNew)       || 0,
+        nohinTotal:   Number(perfMonthly.nohinTotal)   || 0,
+        nohinNew:     Number(perfMonthly.nohinNew)     || 0
+      };
+    } else {
+      perfMonthlyBase = {
+        kyakuTotal: 0, kyakuNew: 0,
+        shodanTotal: 0, shodanNew: 0,
+        shichoTotal: 0, shichoNew: 0,
+        keiyakuTotal: 0, keiyakuNew: 0,
+        canTotal: 0, canNew: 0,
+        nohinTotal: 0, nohinNew: 0
+      };
+    }
+    updatePerfMonthly();
+    // 県セレクト
+    if (prev.aichiPref) {
+      const ps = document.getElementById("aichi-pref-select");
+      if (ps) ps.value = prev.aichiPref;
+    }
+    // リスト系のクリア＆反映
+    clearAllLists();
+
+    // 相談会
+    if (prev.meet) {
+      (prev.meet.prefs || []).forEach(pb => {
+        addPrefBlock("meet", pb.pref, pb.items || []);
+      });
+      (prev.meet.seikyo || []).forEach(it => {
+        const list = document.getElementById("meet-seikyo-list");
+        list.appendChild(createMeetItem(it, true));
+      });
+    }
+
+    // 復元用：lineが文字列でもオブジェクトでも適切に処理
+    const restoreItem = (line) => {
+      if (typeof line === "object" && line !== null) {
+        // 新形式：{text, seq, dropdownValues}
+        const text = line.text || "";
+        let type = "";
+        if (text.includes("成約") || text.includes("⭕") || text.includes("契約")) type = "success";
+        else if (text.match(/SO|[Ss]o(?![a-z])|アウト/)) type = "so";
+        return { text: text, type: type, dropdownValues: line.dropdownValues || {} };
+      }
+      // 旧形式（文字列）：parseListLineで処理
+      const parsed = parseListLine(line);
+      return { text: parsed.text, type: parsed.type, dropdownValues: {} };
+    };
+
+    // 新規来場
+    if (prev.raijo) {
+      (prev.raijo.prefs || []).forEach(pb => {
+        const items = (pb.items || []).map(line => restoreItem(line));
+        addPrefBlock("raijo", pb.pref, items);
+      });
+      (prev.raijo.seikyo || []).forEach(line => {
+        const list = document.getElementById("raijo-seikyo-list");
+        const item = restoreItem(line);
+        list.appendChild(createListItem(item.text, item.type, true, "raijoSeikyo", item.dropdownValues));
+      });
+    }
+
+    // JA新規
+    if (prev.respJA) {
+      ["respH", "respT", "respJ", "respS"].forEach(key => {
+        const arr = prev.respJA[key] || [];
+        arr.forEach(pb => {
+          const items = (pb.items || []).map(line => restoreItem(line));
+          addPrefBlock(key, pb.pref, items);
+        });
+      });
+    }
+
+    // 生協新規
+    if (prev.respSeikyo) {
+      ["srespH", "srespT", "srespJ", "srespS"].forEach(key => {
+        const arr = prev.respSeikyo[key] || [];
+        const list = document.getElementById(`${key}-list`);
+        if (list) {
+          // カテゴリ判定
+          const category = key === "srespJ" ? "seikyoSyokai" :
+                           key === "srespS" ? "seikyoSP" :
+                           "seikyoPlain";
+          arr.forEach(line => {
+            const item = restoreItem(line);
+            list.appendChild(createListItem(item.text, item.type, true, category, item.dropdownValues));
+          });
+        }
+      });
+    }
+
+    // 在庫
+    if (prev.stock) {
+      (prev.stock || []).forEach(t => addStock(t));
+    }
+
+    // メモは前日引継しない（毎回空）
+    const memoEl = document.getElementById("memo-text");
+    if (memoEl) memoEl.value = "";
+
+    renumberAll();
+    updateAllCounts();
+  }
+
+  // 行頭の連番（"1.", "※"など）を除去してテキストを返す
+  function parseListLine(line) {
+    if (typeof line !== "string") return { text: "", type: "" };
+    let txt = line.replace(/^[0-9]+\.\s*/, "").replace(/^※\s*/, m => m.trim() + " ");
+    // 先頭の [xxx] タグ（複数連結も）を全部除去
+    while (true) {
+      // ※プレフィックスを保持しつつタグだけ剥がす
+      const m = txt.match(/^(※\s*)?\s*(\[[^\]]*\]\s*)+/);
+      if (!m) break;
+      const asteriskPrefix = m[1] || "";
+      txt = asteriskPrefix + txt.slice(m[0].length);
+      // 無限ループ防止
+      if (!m[0] || m[0] === asteriskPrefix) break;
+    }
+    let type = "";
+    if (txt.includes("成約") || txt.includes("⭕") || txt.includes("契約")) type = "success";
+    else if (txt.match(/SO|[Ss]o(?![a-z])|アウト/)) type = "so";
+    return { text: txt.startsWith("※") ? txt.replace(/^※\s*/, "※") : txt, type };
+  }
+
+  // ===== 社員情報（送信先メール）反映 =====
+  function applyUserInfo(userInfo) {
+    if (!userInfo) {
+      recipients = [];
+    } else {
+      recipients = userInfo.recipients || [];
+    }
+    updateRecipientsSummary();
+  }
+
+  // ===== 全入力リセット =====
+  function resetAllInputs() {
+    document.querySelectorAll("input[data-key]").forEach(i => i.value = 0);
+    [
+      "sales-prev-carry", "sales-this-ja", "sales-this-seikyo", "sales-next-month",
+      "perf-kyaku-total", "perf-kyaku-new",
+      "perf-shodan-total", "perf-shodan-new",
+      "perf-shicho-total", "perf-shicho-new",
+      "perf-keiyaku-total", "perf-keiyaku-new",
+      "perf-can-total", "perf-can-new",
+      "perf-nohin-total", "perf-nohin-new"
+    ].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = 0;
+    });
+    // 月内累計ベースもリセット
+    perfMonthlyBase = {
+      kyakuTotal: 0, kyakuNew: 0,
+      shodanTotal: 0, shodanNew: 0,
+      shichoTotal: 0, shichoNew: 0,
+      keiyakuTotal: 0, keiyakuNew: 0,
+      canTotal: 0, canNew: 0,
+      nohinTotal: 0, nohinNew: 0
+    };
+    updatePerfMonthly();
+    clearAllLists();
+    document.getElementById("stock-list").innerHTML = "";
+    // メモは毎回クリア（前日引継しない）
+    const memoEl = document.getElementById("memo-text");
+    if (memoEl) memoEl.value = "";
+  }
+
+  function clearAllLists() {
+    ["meet-pref-blocks", "raijo-pref-blocks", "respH-pref-blocks",
+     "respT-pref-blocks", "respJ-pref-blocks", "respS-pref-blocks"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = "";
+    });
+    ["meet-seikyo-list", "raijo-seikyo-list",
+     "srespH-list", "srespT-list", "srespJ-list", "srespS-list"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = "";
+    });
+    document.getElementById("stock-list").innerHTML = "";
+  }
+
+  // ===== 当日下書き保存（localStorage） =====
+  // 本日の商談・メモ・翌営業日の予定を、報告者ごと＋日付ごとに端末保存
+  // 同日中は復元、翌日はクリア
+
+  function getDraftKey() {
+    const user = (document.getElementById("userSelect") || {}).value || "_";
+    return "draft_" + user;
+  }
+
+  function getTodayDateStr() {
+    const n = new Date();
+    return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;
+  }
+
+  // 現在の入力内容を下書きとして保存
+  function saveDraft() {
+    try {
+      // 本日の商談（カテゴリごとのテキスト配列）
+      const todayData = {};
+      TODAY_CATS.forEach(cat => {
+        const items = Array.from(document.querySelectorAll(`#today-${cat.key}-list textarea`))
+          .map(t => t.value)
+          .filter(t => t.trim().length > 0);
+        if (items.length > 0) todayData[cat.key] = items;
+      });
+      const draft = {
+        date: getTodayDateStr(),
+        today: todayData,
+        memo: (document.getElementById("memo-text") || {}).value || "",
+        nextFree: (document.querySelector('[data-key="next-free"]') || {}).value || ""
+      };
+      localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+    } catch (e) {
+      console.warn("下書き保存エラー:", e);
+    }
+  }
+
+  // 下書きを復元（同日のみ。翌日ならクリア）
+  function restoreDraft() {
+    try {
+      const raw = localStorage.getItem(getDraftKey());
+      if (!raw) return;
+      const draft = JSON.parse(raw);
+      // 日付が違う（翌日以降）ならクリアして終了
+      if (!draft.date || draft.date !== getTodayDateStr()) {
+        localStorage.removeItem(getDraftKey());
+        return;
+      }
+      // 本日の商談を復元
+      if (draft.today) {
+        TODAY_CATS.forEach(cat => {
+          const items = draft.today[cat.key];
+          if (items && items.length > 0) {
+            const list = document.getElementById(`today-${cat.key}-list`);
+            if (list) {
+              list.innerHTML = "";
+              items.forEach(t => addTodayItem(cat.key, t));
+            }
+          }
+        });
+      }
+      // メモを復元
+      if (draft.memo) {
+        const memoEl = document.getElementById("memo-text");
+        if (memoEl) memoEl.value = draft.memo;
+      }
+      // 翌営業日の予定を復元
+      if (draft.nextFree) {
+        const nf = document.querySelector('[data-key="next-free"]');
+        if (nf) nf.value = draft.nextFree;
+      }
+      updateAllCounts();
+    } catch (e) {
+      console.warn("下書き復元エラー:", e);
+    }
+  }
+
+  // 下書きをクリア（送信完了時に呼ぶ）
+  function clearDraft() {
+    try {
+      localStorage.removeItem(getDraftKey());
+    } catch (e) {}
+  }
+
+  // 入力時に自動保存するリスナーを設定
+  function setupDraftAutoSave() {
+    document.addEventListener("input", (e) => {
+      const t = e.target;
+      if (!t) return;
+      // 本日の商談・メモ・翌営業日の予定の入力欄のみ対象
+      const isToday = t.closest && t.closest(".today-sub-list");
+      const isMemo = t.id === "memo-text";
+      const isNextFree = t.dataset && t.dataset.key === "next-free";
+      if (isToday || isMemo || isNextFree) {
+        saveDraft();
+      }
+    });
+  }
+
+  // ===== 起動時：社員一覧取得＋初期社員のデータ取得 =====
+  async function loadInitial() {
+    buildTodaySection();
+
+    // 数値入力に変更検知
+    document.querySelectorAll('input[data-area]').forEach(i => {
+      i.addEventListener("input", updateAllCounts);
+    });
+
+    // GASから社員一覧を取得
+    showLoading("起動中...");
+    const sel = document.getElementById("userSelect");
+
+    try {
+      console.log("[起動] GAS呼び出し開始: " + GAS_URL);
+      const areaForInit = document.getElementById("areaSelect").value || "";
+      const divisionForInit = document.getElementById("divisionSelect").value || "";
+      const result = await gasGet({ action: "init", area: areaForInit, division: divisionForInit });
+      console.log("[起動] GAS応答:", result);
+
+      if (result && result.success) {
+        // 社員プルダウン更新
+        sel.innerHTML = "";
+        const users = result.users || [];
+        if (users.length === 0) {
+          sel.innerHTML = '<option value="">（社員データなし）</option>';
+          showToast("社員マスタにデータがありません");
+        } else {
+          users.forEach(u => {
+            const opt = document.createElement("option");
+            opt.value = u.name;
+            opt.textContent = u.name;
+            sel.appendChild(opt);
+          });
+          // 前回この端末で選択した社員を復元
+          try {
+            const lastUser = localStorage.getItem("lastUser");
+            if (lastUser && users.some(u => u.name === lastUser)) {
+              sel.value = lastUser;
+            }
+          } catch (e) {
+            console.warn("localStorage読み込みエラー:", e);
+          }
+        }
+        // 報告者変更時のリスナー（選択時に端末に保存）
+        sel.addEventListener("change", () => {
+          try {
+            localStorage.setItem("lastUser", sel.value);
+          } catch (e) {
+            console.warn("localStorage書き込みエラー:", e);
+          }
+          onUserChanged();
+        });
+
+        // エリア・事業部は固定値（hidden input）のため、復元・保存処理は不要
+
+        // 県プルダウン（aichi-pref-select）に全国都道府県を反映
+        try {
+          const aichiPrefSel = document.getElementById("aichi-pref-select");
+          if (aichiPrefSel) {
+            const currentVal = aichiPrefSel.value || "愛知";
+            aichiPrefSel.innerHTML = "";
+            PREFECTURES.forEach(p => {
+              const opt = document.createElement("option");
+              opt.value = p;
+              opt.textContent = p;
+              if (p === currentVal) opt.selected = true;
+              aichiPrefSel.appendChild(opt);
+            });
+          }
+        } catch (e) {
+          console.warn("県プルダウン初期化エラー:", e);
+        }
+
+        // 最初の社員のデータを読み込む
+        if (users.length > 0) {
+          await onUserChanged();
+        }
+      } else {
+        console.error("[起動] GAS応答が不正:", result);
+        sel.innerHTML = '<option value="">エラー</option>';
+        showToast("社員一覧の取得に失敗: " + ((result && result.error) || "不明"));
+      }
+    } catch (err) {
+      console.error("[起動] 通信エラー:", err);
+      sel.innerHTML = '<option value="">通信エラー</option>';
+      showToast("通信エラー: " + (err.message || err));
+    } finally {
+      hideLoading();
+      updateAllCounts();
+    }
+  }
+  loadInitial();
+
+  // 当日下書きの自動保存リスナーをセットアップ
+  setupDraftAutoSave();
+
+  // 客数報告（当日分）の入力時、月内累計表示をリアルタイム更新
+  ["perf-kyaku-total", "perf-kyaku-new",
+   "perf-shodan-total", "perf-shodan-new",
+   "perf-shicho-total", "perf-shicho-new",
+   "perf-keiyaku-total", "perf-keiyaku-new",
+   "perf-can-total", "perf-can-new",
+   "perf-nohin-total", "perf-nohin-new"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", updatePerfMonthly);
+  });
+
+  // ===== レポート組み立て =====
+  function buildReport() {
+    const v = (key) => {
+      const el = document.querySelector(`[data-key="${key}"]`);
+      return el ? el.value : "";
+    };
+    const reportDate = document.getElementById("reportDate").value;
+    const rDateStr = reportDate ? reportDate.replace(/-/g, "/") : "";
+    const grandTotal = document.getElementById("totalDisplay").textContent;
+    const nextDate = document.getElementById("nextDate").value;
+    let nextDateStr = "";
+    if (nextDate) {
+      const _parts = nextDate.split("-");
+      if (_parts.length === 3) {
+        const _d = new Date(parseInt(_parts[0]), parseInt(_parts[1]) - 1, parseInt(_parts[2]));
+        const _dow = ["日","月","火","水","木","金","土"][_d.getDay()];
+        nextDateStr = `${parseInt(_parts[1])}/${parseInt(_parts[2])}(${_dow})`;
+      }
+    }
+
+    let report = "";
+    report += "《送信専用》 稼働状況報告アプリより自動配信しております。\n\n";
+    report += "━━━━━━━━━━━━━━━━━━━━━\n";
+    report += `【最終報告】 ${rDateStr}\n`;
+    const divisionV = document.getElementById("divisionSelect").value || "";
+    const areaV = document.getElementById("areaSelect").value || "";
+    report += `事業部：${divisionV || "（未設定）"}　エリア：${areaV || "（未設定）"}\n`;
+    report += `報告者：${document.getElementById("userSelect").value}　（${APP_VERSION}）\n`;
+    report += "━━━━━━━━━━━━━━━━━━━━━\n\n";
+
+    // 月内累計（客数報告セクションは表示せず、月内累計のみ）
+    // 表示形式：月内累計(当日分)　例：8(3)
+    const pv = (id) => parseInt(document.getElementById(id).value) || 0;
+    const mTotal = (key, todayId) => {
+      const today = pv(todayId);
+      const total = (perfMonthlyBase[key] || 0) + today;
+      return `${formatNumDisplay(total)} (${formatNumDisplay(today)})`;
+    };
+    report += "【月内累計】（=日報数値）　※( )内は本日分※\n";
+    report += "───────\n";
+    report += `客数    総合計 ${mTotal("kyakuTotal","perf-kyaku-total")}  /  新規 ${mTotal("kyakuNew","perf-kyaku-new")}\n`;
+    report += `商談    総合計 ${mTotal("shodanTotal","perf-shodan-total")}  /  新規 ${mTotal("shodanNew","perf-shodan-new")}\n`;
+    report += `試聴    総合計 ${mTotal("shichoTotal","perf-shicho-total")}  /  新規 ${mTotal("shichoNew","perf-shicho-new")}\n`;
+    report += `契約    総合計 ${mTotal("keiyakuTotal","perf-keiyaku-total")}  /  新規 ${mTotal("keiyakuNew","perf-keiyaku-new")}\n`;
+    report += `契約CAN 総合計 ${mTotal("canTotal","perf-can-total")}  /  新規 ${mTotal("canNew","perf-can-new")}\n`;
+    report += `納品    総合計 ${mTotal("nohinTotal","perf-nohin-total")}  /  新規 ${mTotal("nohinNew","perf-nohin-new")}　※日報非反映・報告漏れ確認用※\n\n`;
+
+    // 現在の売上
+    const salesPrevCarry = parseInt(document.getElementById("sales-prev-carry").value) || 0;
+    const salesJA = parseInt(document.getElementById("sales-this-ja").value) || 0;
+    const salesSeikyo = parseInt(document.getElementById("sales-this-seikyo").value) || 0;
+    const salesNext = parseInt(document.getElementById("sales-next-month").value) || 0;
+    report += `【現在の売上】 前月繰越 ${formatNumDisplay(salesPrevCarry)}台 / 今月JA ${formatNumDisplay(salesJA)}台、生協 ${formatNumDisplay(salesSeikyo)}台 / 来月繰越 ${formatNumDisplay(salesNext)}台\n`;
+    report += "───────\n\n";
+
+    const aichiPref = document.getElementById("aichi-pref-select").value;
+    // 内訳計算（プレビュー用）
+    const sumKeys = (keys) => keys.reduce((a, k) => a + (parseInt(v(k)) || 0), 0);
+    const aichiShinki = sumKeys(["aichi-soudan", "aichi-henshin", "aichi-toiawase", "aichi-jsho", "aichi-kakusho"]);
+    const aichiRepeat = parseInt(v("aichi-tsuikai")) || 0;
+    const aichiOther = sumKeys(["aichi-so", "aichi-other"]);
+    const aichiSum = aichiShinki + aichiRepeat + aichiOther;
+    const seikyoShinki = sumKeys(["seikyo-soudan", "seikyo-henshin", "seikyo-toiawase", "seikyo-jsho", "seikyo-kakusho"]);
+    const seikyoRepeat = parseInt(v("seikyo-tsuikai")) || 0;
+    const seikyoOther = sumKeys(["seikyo-so", "seikyo-other"]);
+    const seikyoSum = seikyoShinki + seikyoRepeat + seikyoOther;
+    const seikyoJshoLabel = (document.getElementById("seikyo-jsho-label") || {}).textContent || "生協紹";
+
+    // 月間累計用の数値表示ヘルパー
+    const vd = (key) => formatNumDisplay(v(key));
+    report += `【商談件数 月間累計】 ${formatNumDisplay(grandTotal)}件\n`;
+    report += "───────\n";
+    report += `《${aichiPref}》　合計商談 ${formatNumDisplay(aichiSum)}件 (新規${formatNumDisplay(aichiShinki)}件、リピート${formatNumDisplay(aichiRepeat)}件、その他${formatNumDisplay(aichiOther)}件)\n`;
+    report += `  相談会 ${vd("aichi-soudan")}　返信 ${vd("aichi-henshin")}　問合 ${vd("aichi-toiawase")}　J紹 ${vd("aichi-jsho")}　客紹 ${vd("aichi-kakusho")}　追買 ${vd("aichi-tsuikai")}　SO ${vd("aichi-so")}　その他 ${vd("aichi-other")}件\n`;
+    report += `《生協》　合計商談 ${formatNumDisplay(seikyoSum)}件 (新規${formatNumDisplay(seikyoShinki)}件、リピート${formatNumDisplay(seikyoRepeat)}件、その他${formatNumDisplay(seikyoOther)}件)\n`;
+    report += `  相談会 ${vd("seikyo-soudan")}　返信 ${vd("seikyo-henshin")}　問合 ${vd("seikyo-toiawase")}　${seikyoJshoLabel} ${vd("seikyo-jsho")}　客紹 ${vd("seikyo-kakusho")}　追買 ${vd("seikyo-tsuikai")}　SO ${vd("seikyo-so")}　その他 ${vd("seikyo-other")}件\n\n`;
+
+    report += "【本日の商談・結果】\n";
+    report += "───────\n";
+    // 全カテゴリのアイテム集計
+    const todayItemsByCategory = TODAY_CATS.map(cat => ({
+      label: cat.label,
+      items: Array.from(document.querySelectorAll(`#today-${cat.key}-list textarea`))
+        .map(t => t.value.trim()).filter(t => t.length > 0)
+    }));
+    const todayHasAny = todayItemsByCategory.some(c => c.items.length > 0);
+    if (todayHasAny) {
+      todayItemsByCategory.forEach(c => {
+        // 入力があったカテゴリのみ表示
+        if (c.items.length > 0) {
+          report += `${c.label}\n`;
+          c.items.forEach(t => report += `  ・${t}\n`);
+        }
+      });
+    }
+    report += "\n";
+
+    // メモ
+    const memoText = (document.getElementById("memo-text") || {}).value || "";
+    report += "【メモ】\n";
+    report += "───────\n";
+    report += memoText.trim() ? memoText.trim() + "\n\n" : "\n";
+
+    report += `【翌営業日の予定】${nextDateStr}\n`;
+    report += "───────\n";
+    const nextFree = v("next-free").trim();
+    report += nextFree ? nextFree + "\n\n" : "\n";
+
+    // プルダウン値を本文に組み込むヘルパー
+    const formatItemText = (item, txt) => {
+      // 先頭の※を保持しつつ、既存タグを除去
+      let cleaned = txt;
+      const asteriskMatch = cleaned.match(/^※\s*/);
+      const asteriskPrefix = asteriskMatch ? "※" : "";
+      if (asteriskMatch) cleaned = cleaned.slice(asteriskMatch[0].length);
+      while (true) {
+        const m = cleaned.match(/^\s*\[[^\]]*\]\s*/);
+        if (!m) break;
+        cleaned = cleaned.slice(m[0].length);
+      }
+      cleaned = asteriskPrefix + cleaned;
+      const dropdowns = item.querySelectorAll(".list-dropdown");
+      if (dropdowns.length === 0) return cleaned;
+      const tags = [];
+      dropdowns.forEach(sel => {
+        const v = sel.value.trim();
+        if (!v) return;
+        if (sel.dataset.name === "result" && v === "契約") {
+          // 結果プルダウンの「契約」は ⭕️ に変換してタグ表示
+          tags.push("⭕️");
+        } else {
+          tags.push(v);
+        }
+      });
+      const tagStr = tags.length > 0 ? tags.map(t => `[${t}]`).join("") + " " : "";
+      // ※の後ろ、または先頭にタグを付与
+      if (cleaned.startsWith("※")) {
+        return `※${tagStr}${cleaned.slice(1).trim()}`;
+      }
+      return `${tagStr}${cleaned}`;
+    };
+
+    const collectPrefBlocks = (sectionType) => {
+      const result = [];
+      const container = document.getElementById(`${sectionType}-pref-blocks`);
+      if (!container) return result;
+      container.querySelectorAll(".list-area").forEach(block => {
+        const pref = block.querySelector(".pref-select").value;
+        const items = Array.from(block.querySelectorAll(".pref-list .list-item"))
+          .map(item => {
+            const seqEl = item.querySelector(".seq-num");
+            const seq = seqEl ? seqEl.textContent : "";
+            const txt = item.querySelector("textarea").value.trim();
+            if (!txt) return null;
+            if (txt.startsWith("※")) return formatItemText(item, txt);
+            const formatted = formatItemText(item, txt);
+            return seq ? `${seq} ${formatted}` : formatted;
+          }).filter(t => t);
+        if (items.length > 0) result.push({ pref, items });
+      });
+      return result;
+    };
+    // ※付きと連番（数字始まり）の件数をカウント
+    const countTypes = (sectionType) => {
+      let asterisk = 0, numbered = 0;
+      const container = document.getElementById(`${sectionType}-pref-blocks`);
+      if (container) {
+        container.querySelectorAll(".pref-list .list-item textarea").forEach(ta => {
+          const txt = ta.value.trim();
+          if (!txt) return;
+          if (txt.startsWith("※")) asterisk++;
+          else numbered++;
+        });
+      }
+      return { asterisk, numbered };
+    };
+    // 単独リスト用の※付き／連番カウント
+    const countTypesList = (listIds) => {
+      let asterisk = 0, numbered = 0;
+      listIds.forEach(id => {
+        const list = document.getElementById(id);
+        if (!list) return;
+        list.querySelectorAll(":scope > .list-item textarea").forEach(ta => {
+          const txt = ta.value.trim();
+          if (!txt) return;
+          if (txt.startsWith("※")) asterisk++;
+          else numbered++;
+        });
+      });
+      return { asterisk, numbered };
+    };
+    const collectMeetBlocks = (sectionType) => {
+      const result = [];
+      const container = document.getElementById(`${sectionType}-pref-blocks`);
+      if (!container) return result;
+      container.querySelectorAll(".list-area").forEach(block => {
+        const pref = block.querySelector(".pref-select").value;
+        let totalShinki = 0, totalKou = 0;
+        const items = Array.from(block.querySelectorAll(".pref-list .meet-item"))
+          .map(item => {
+            const seqEl = item.querySelector(".seq-num");
+            const seq = seqEl ? seqEl.textContent : "";
+            const date = item.querySelector(".meet-date").value.trim();
+            const venue = item.querySelector(".meet-venue").value.trim();
+            const venueType = (item.querySelector(".meet-venue-type") || {}).value || "";
+            const sN = parseInt(item.querySelector(".meet-num.shinki").value) || 0;
+            const kN = parseInt(item.querySelector(".meet-num.koukyaku").value) || 0;
+            if (!venue) return null;
+            totalShinki += sN;
+            totalKou += kN;
+            const tag = venueType ? `[${venueType}] ` : "";
+            return `${seq} ${tag}${date} ${venue}　(新規 ${sN}名、顧客 ${kN}名)`;
+          }).filter(t => t);
+        if (items.length > 0) result.push({ pref, items, totalShinki, totalKou });
+      });
+      return result;
+    };
+    const collectMeetSeikyo = (id) => {
+      const list = document.getElementById(id);
+      if (!list) return null;
+      let totalShinki = 0, totalKou = 0;
+      const items = Array.from(list.querySelectorAll(":scope > .meet-item"))
+        .map(item => {
+          const seqEl = item.querySelector(".seq-num");
+          const seq = seqEl ? seqEl.textContent : "";
+          const date = item.querySelector(".meet-date").value.trim();
+          const venue = item.querySelector(".meet-venue").value.trim();
+          const venueType = (item.querySelector(".meet-venue-type") || {}).value || "";
+          const sN = parseInt(item.querySelector(".meet-num.shinki").value) || 0;
+          const kN = parseInt(item.querySelector(".meet-num.koukyaku").value) || 0;
+          if (!venue) return null;
+          totalShinki += sN;
+          totalKou += kN;
+          const tag = venueType ? `[${venueType}] ` : "";
+          return `${seq} ${tag}${date} ${venue}　(新規 ${sN}名、顧客 ${kN}名)`;
+        }).filter(t => t);
+      return items.length > 0 ? { items, totalShinki, totalKou } : null;
+    };
+    const collectList = (id) => {
+      const list = document.getElementById(id);
+      if (!list) return [];
+      return Array.from(list.querySelectorAll(":scope > .list-item"))
+        .map(item => {
+          const seqEl = item.querySelector(".seq-num");
+          const seq = seqEl ? seqEl.textContent : "";
+          const txt = item.querySelector("textarea").value.trim();
+          if (!txt) return null;
+          if (txt.startsWith("※")) return formatItemText(item, txt);
+          const formatted = formatItemText(item, txt);
+          return seq ? `${seq} ${formatted}` : formatted;
+        }).filter(t => t);
+    };
+
+    // 今月の相談会
+    const meetTotal = parseInt(document.getElementById("badge-meet").textContent) || 0;
+    const meetShinki = parseInt(document.getElementById("badge-meet-shinki").textContent) || 0;
+    const meetKou = parseInt(document.getElementById("badge-meet-koukyaku").textContent) || 0;
+    const meetSupport = parseInt((document.getElementById("badge-meet-support") || {}).textContent || "0") || 0;
+    report += `【今月の相談会】 JA${meetTotal}会場（内サポ会場 ${meetSupport}）、JA新規${meetShinki}名、JA顧客${meetKou}名\n`;
+    report += "───────\n";
+    const meetData = collectMeetBlocks("meet");
+    meetData.forEach(({pref, items, totalShinki, totalKou}) => {
+      report += `《${pref}》　${items.length}会場 新規${totalShinki}名・顧客${totalKou}名\n`;
+      items.forEach(t => report += `${t}\n`);
+    });
+    // 生協会場：メールで生協個別の集計を表示
+    const meetSeikyoListEl = document.getElementById("meet-seikyo-list");
+    let seikyoSupportCount = 0;
+    if (meetSeikyoListEl) {
+      meetSeikyoListEl.querySelectorAll(":scope > .meet-item").forEach(item => {
+        const venue = item.querySelector(".meet-venue").value.trim();
+        if (!venue) return;
+        const venueType = (item.querySelector(".meet-venue-type") || {}).value || "";
+        if (venueType === "サポ会場") seikyoSupportCount++;
+      });
+    }
+    const meetSeikyo = collectMeetSeikyo("meet-seikyo-list");
+    if (meetSeikyo) {
+      report += `《生協》会場　生協${meetSeikyo.items.length}会場（内サポ会場 ${seikyoSupportCount}）、新規${meetSeikyo.totalShinki}名、顧客${meetSeikyo.totalKou}名\n`;
+      meetSeikyo.items.forEach(t => report += `${t}\n`);
+    }
+    report += "\n";
+
+    // 新規来場：JA（県）と生協で個別集計、※と今月の分離も実施
+    const raijoStats = (() => {
+      const collectStats = (container, isSeikyoList) => {
+        let astTotal = 0, numTotal = 0, supportApo = 0;
+        const items = isSeikyoList
+          ? container.querySelectorAll(":scope > .list-item")
+          : container.querySelectorAll(".pref-list .list-item");
+        items.forEach(item => {
+          const ta = item.querySelector("textarea");
+          if (!ta || !ta.value.trim()) return;
+          const txt = ta.value.trim();
+          if (txt.startsWith("※")) astTotal++;
+          else numTotal++;
+          const apoSel = item.querySelector('select[data-name="apo"]');
+          if (apoSel && apoSel.value === "サポAPO") supportApo++;
+        });
+        return { astTotal, numTotal, supportApo };
+      };
+      const jaContainer = document.getElementById("raijo-pref-blocks");
+      const ja = jaContainer ? collectStats(jaContainer, false) : { astTotal: 0, numTotal: 0, supportApo: 0 };
+      const seikyoList = document.getElementById("raijo-seikyo-list");
+      const seikyo = seikyoList ? collectStats(seikyoList, true) : { astTotal: 0, numTotal: 0, supportApo: 0 };
+      return { ja, seikyo };
+    })();
+    report += `【新規---来場】 JA※${raijoStats.ja.astTotal}件・JA今月${raijoStats.ja.numTotal}件（内サポAPO ${raijoStats.ja.supportApo}件）\n`;
+    report += "───────\n";
+    const raijoData = collectPrefBlocks("raijo");
+    raijoData.forEach(({pref, items}) => {
+      report += `《${pref}》\n`;
+      items.forEach(t => report += `${t}\n`);
+    });
+    const raijoSeikyo = collectList("raijo-seikyo-list");
+    if (raijoSeikyo.length) {
+      report += `《生協》来場　※${raijoStats.seikyo.astTotal}件・今月${raijoStats.seikyo.numTotal}件（内サポAPO ${raijoStats.seikyo.supportApo}件）\n`;
+      raijoSeikyo.forEach(t => report += `${t}\n`);
+    }
+    report += "\n";
+
+    // JA《新規》
+    report += "【JA《新規》---返信・問合・紹介・他】 " + (() => {
+      const r1 = countTypes("respH");
+      const r2 = countTypes("respT");
+      const r3 = countTypes("respJ");
+      const r4 = countTypes("respS");
+      const ast = r1.asterisk + r2.asterisk + r3.asterisk + r4.asterisk;
+      const num = r1.numbered + r2.numbered + r3.numbered + r4.numbered;
+      return `※${ast}件・今月${num}件`;
+    })() + "\n";
+    report += "───────\n";
+    const respSubs = [
+      { type: "respH", title: "■ JA新規---返信", breakdownId: null },
+      { type: "respT", title: "■ JA新規---問合", breakdownId: null },
+      { type: "respJ", title: "■ JA新規---JA紹介・客紹介", breakdownId: "breakdown-respJ" },
+      { type: "respS", title: "■ JA新規---SP紹介・担当者紹介・他", breakdownId: "breakdown-respS" }
+    ];
+    respSubs.forEach(sub => {
+      const data = collectPrefBlocks(sub.type);
+      if (data.length === 0) return;
+      const breakdown = sub.breakdownId ? ((document.getElementById(sub.breakdownId) || {}).textContent || "") : "";
+      report += `${sub.title}${breakdown}\n`;
+      data.forEach(({pref, items}) => {
+        report += `《${pref}》\n`;
+        items.forEach(t => report += `${t}\n`);
+      });
+      report += "\n";
+    });
+
+    // 生協《新規》
+    report += "【生協《新規》---返信・問合・紹介・他】 " + (() => {
+      const r = countTypesList(["srespH-list", "srespT-list", "srespJ-list", "srespS-list"]);
+      return `※${r.asterisk}件・今月${r.numbered}件`;
+    })() + "\n";
+    report += "───────\n";
+    const srespSubs2 = [
+      { id: "srespH-list", title: "■ 生協新規---返信", breakdownId: null },
+      { id: "srespT-list", title: "■ 生協新規---問合", breakdownId: null },
+      { id: "srespJ-list", title: "■ 生協新規---生協紹介・客紹介", breakdownId: "breakdown-srespJ" },
+      { id: "srespS-list", title: "■ 生協新規---SP紹介・担当者紹介・他", breakdownId: "breakdown-srespS" }
+    ];
+    srespSubs2.forEach(sub => {
+      const items = collectList(sub.id);
+      if (items.length === 0) return;
+      const breakdown = sub.breakdownId ? ((document.getElementById(sub.breakdownId) || {}).textContent || "") : "";
+      report += `${sub.title}${breakdown}\n`;
+      items.forEach(t => report += `${t}\n`);
+      report += "\n";
+    });
+
+    // 在庫：自分の在庫
+    const selfUserName = document.getElementById("userSelect").value;
+    const selfStock = Array.from(document.querySelectorAll("#stock-list input"))
+      .map(i => i.value.trim())
+      .filter(t => t.length > 0);
+
+    report += "【報告者の在庫】\n";
+    report += "───────\n";
+    if (selfStock.length === 0) {
+      report += "（在庫なし）\n";
+    } else {
+      selfStock.forEach(t => report += `${t}\n`);
+    }
+    report += "\n";
+
+    // 在庫：エリア内他社員
+    report += "【エリア内の在庫】\n";
+    report += "───────\n";
+    if (!Array.isArray(areaStocksData) || areaStocksData.length === 0) {
+      report += "（データなし）\n";
+    } else {
+      // 自分以外を抽出
+      const others = areaStocksData.filter(s => s && s.name && s.name !== selfUserName);
+      if (others.length === 0) {
+        report += "（同エリアの他社員データなし）\n";
+      } else {
+        others.forEach(s => {
+          // 名前行：報告ありは「（最終M/D）」、未報告はカッコなし
+          let nameLine = `■${s.name}`;
+          if (s.hasRecord) {
+            nameLine += `（最終${s.lastReportDate || "-"}）`;
+          }
+          report += `${nameLine}\n`;
+          if (s.stock && s.stock.length > 0) {
+            s.stock.forEach(t => report += `${t}\n`);
+          } else {
+            report += "（在庫なし）\n";
+          }
+          report += "\n";
+        });
+      }
+    }
+    report += "\n━━━━━━━━━━━━━━━━━━━━━\n";
+    report += `(株)NICヒアリング 東北南三県エリア　報告者：${document.getElementById("userSelect").value}\n`;
+    report += "《送信専用》 稼働状況報告アプリより自動配信しておりますので、こちらにご返信いただきましても応答いたしかねます。\n";
+    report += "お問い合わせは報告者まで直接ご返信・ご連絡くださいますようお願い申し上げます。\n";
+    report += "━━━━━━━━━━━━━━━━━━━━━\n";
+
+    return report;
+  }
+
+  // ===== 入力データ収集（GAS送信用） =====
+  function collectAllData() {
+    // 数値カウント
+    const counts = {};
+    document.querySelectorAll("input[data-key]").forEach(input => {
+      counts[input.dataset.key] = Number(input.value) || 0;
+    });
+
+    // 本日の商談
+    const today = {};
+    TODAY_CATS.forEach(cat => {
+      today[cat.key] = Array.from(document.querySelectorAll(`#today-${cat.key}-list textarea`))
+        .map(t => t.value.trim()).filter(t => t.length > 0);
+    });
+
+    // 翌営業日
+    const nextDate = document.getElementById("nextDate").value;
+    const nextDateStr = nextDate ? `${parseInt(nextDate.split("-")[1])}/${parseInt(nextDate.split("-")[2])}` : "";
+    const nextFreeEl = document.querySelector('[data-key="next-free"]');
+    const nextFree = nextFreeEl ? nextFreeEl.value : "";
+
+    // 県名
+    const aichiPrefEl = document.getElementById("aichi-pref-select");
+    const aichiPref = aichiPrefEl ? aichiPrefEl.value : "愛知";
+
+    // 月間累計
+    const totalDispEl = document.getElementById("totalDisplay");
+    const totalCount = totalDispEl ? parseInt(totalDispEl.textContent) || 0 : 0;
+
+    // 相談会
+    const meet = { prefs: [], seikyo: [] };
+    document.querySelectorAll("#meet-pref-blocks .list-area").forEach(block => {
+      const pref = block.querySelector(".pref-select").value;
+      const items = Array.from(block.querySelectorAll(".pref-list .meet-item"))
+        .map(item => ({
+          date: item.querySelector(".meet-date").value.trim(),
+          venue: item.querySelector(".meet-venue").value.trim(),
+          venueType: (item.querySelector(".meet-venue-type") || {}).value || "",
+          shinki: parseInt(item.querySelector(".meet-num.shinki").value) || 0,
+          koukyaku: parseInt(item.querySelector(".meet-num.koukyaku").value) || 0
+        }))
+        .filter(it => it.venue);
+      if (items.length) meet.prefs.push({ pref, items });
+    });
+    Array.from(document.querySelectorAll("#meet-seikyo-list > .meet-item"))
+      .map(item => ({
+        date: item.querySelector(".meet-date").value.trim(),
+        venue: item.querySelector(".meet-venue").value.trim(),
+        venueType: (item.querySelector(".meet-venue-type") || {}).value || "",
+        shinki: parseInt(item.querySelector(".meet-num.shinki").value) || 0,
+        koukyaku: parseInt(item.querySelector(".meet-num.koukyaku").value) || 0
+      }))
+      .filter(it => it.venue)
+      .forEach(it => meet.seikyo.push(it));
+
+    // 県別ブロック収集ヘルパー（共通）
+    // プルダウン値を取得するヘルパー
+    const getDropdownValues = (item) => {
+      const values = {};
+      item.querySelectorAll(".list-dropdown").forEach(sel => {
+        const name = sel.dataset.name;
+        if (name) values[name] = sel.value || "";
+      });
+      return values;
+    };
+
+    // テキスト本体から先頭の[xxx]タグを除去
+    const stripTags = (txt) => {
+      let cleaned = txt;
+      const asteriskMatch = cleaned.match(/^※\s*/);
+      const asteriskPrefix = asteriskMatch ? "※" : "";
+      if (asteriskMatch) cleaned = cleaned.slice(asteriskMatch[0].length);
+      while (true) {
+        const m = cleaned.match(/^\s*\[[^\]]*\]\s*/);
+        if (!m) break;
+        cleaned = cleaned.slice(m[0].length);
+      }
+      return asteriskPrefix + cleaned;
+    };
+
+    const collectPrefBlocksRaw = (sectionType) => {
+      const result = [];
+      const container = document.getElementById(`${sectionType}-pref-blocks`);
+      if (!container) return result;
+      container.querySelectorAll(".list-area").forEach(block => {
+        const pref = block.querySelector(".pref-select").value;
+        const items = Array.from(block.querySelectorAll(".pref-list .list-item"))
+          .map(item => {
+            const seqEl = item.querySelector(".seq-num");
+            const seq = seqEl ? seqEl.textContent : "";
+            const txt = item.querySelector("textarea").value.trim();
+            if (!txt) return null;
+            const cleanText = stripTags(txt);
+            const dropdownValues = getDropdownValues(item);
+            return { text: cleanText, seq: seq || "", dropdownValues };
+          }).filter(t => t);
+        if (items.length > 0) result.push({ pref, items });
+      });
+      return result;
+    };
+    const collectListRaw = (id) => {
+      const list = document.getElementById(id);
+      if (!list) return [];
+      return Array.from(list.querySelectorAll(":scope > .list-item"))
+        .map(item => {
+          const seqEl = item.querySelector(".seq-num");
+          const seq = seqEl ? seqEl.textContent : "";
+          const txt = item.querySelector("textarea").value.trim();
+          if (!txt) return null;
+          const cleanText = stripTags(txt);
+          const dropdownValues = getDropdownValues(item);
+          return { text: cleanText, seq: seq || "", dropdownValues };
+        }).filter(t => t);
+    };
+
+    // 新規来場
+    const raijo = { prefs: collectPrefBlocksRaw("raijo"), seikyo: collectListRaw("raijo-seikyo-list") };
+
+    // JA新規
+    const respJA = {
+      respH: collectPrefBlocksRaw("respH"),
+      respT: collectPrefBlocksRaw("respT"),
+      respJ: collectPrefBlocksRaw("respJ"),
+      respS: collectPrefBlocksRaw("respS")
+    };
+
+    // 生協新規
+    const respSeikyo = {
+      srespH: collectListRaw("srespH-list"),
+      srespT: collectListRaw("srespT-list"),
+      srespJ: collectListRaw("srespJ-list"),
+      srespS: collectListRaw("srespS-list")
+    };
+
+    // 在庫
+    const stock = Array.from(document.querySelectorAll("#stock-list input"))
+      .map(i => i.value.trim()).filter(t => t.length > 0);
+
+    // 現在の売上
+    const sales = {
+      prevCarry: parseInt(document.getElementById("sales-prev-carry").value) || 0,
+      thisJA: parseInt(document.getElementById("sales-this-ja").value) || 0,
+      thisSeikyo: parseInt(document.getElementById("sales-this-seikyo").value) || 0,
+      nextMonth: parseInt(document.getElementById("sales-next-month").value) || 0
+    };
+
+    // 実績件数（当日分）
+    const perf = {
+      kyakuTotal: parseInt(document.getElementById("perf-kyaku-total").value) || 0,
+      kyakuNew: parseInt(document.getElementById("perf-kyaku-new").value) || 0,
+      shodanTotal: parseInt(document.getElementById("perf-shodan-total").value) || 0,
+      shodanNew: parseInt(document.getElementById("perf-shodan-new").value) || 0,
+      shichoTotal: parseInt(document.getElementById("perf-shicho-total").value) || 0,
+      shichoNew: parseInt(document.getElementById("perf-shicho-new").value) || 0,
+      keiyakuTotal: parseInt(document.getElementById("perf-keiyaku-total").value) || 0,
+      keiyakuNew: parseInt(document.getElementById("perf-keiyaku-new").value) || 0,
+      canTotal: parseInt(document.getElementById("perf-can-total").value) || 0,
+      canNew: parseInt(document.getElementById("perf-can-new").value) || 0,
+      nohinTotal: parseInt(document.getElementById("perf-nohin-total").value) || 0,
+      nohinNew: parseInt(document.getElementById("perf-nohin-new").value) || 0
+    };
+
+    // 月内累計（ベース＋当日分）：客数・商談・試聴・契約・契約CAN・納品の6項目
+    const perfMonthly = {
+      kyakuTotal:   (perfMonthlyBase.kyakuTotal || 0)   + perf.kyakuTotal,
+      kyakuNew:     (perfMonthlyBase.kyakuNew || 0)     + perf.kyakuNew,
+      shodanTotal:  (perfMonthlyBase.shodanTotal || 0)  + perf.shodanTotal,
+      shodanNew:    (perfMonthlyBase.shodanNew || 0)    + perf.shodanNew,
+      shichoTotal:  (perfMonthlyBase.shichoTotal || 0)  + perf.shichoTotal,
+      shichoNew:    (perfMonthlyBase.shichoNew || 0)    + perf.shichoNew,
+      keiyakuTotal: (perfMonthlyBase.keiyakuTotal || 0) + perf.keiyakuTotal,
+      keiyakuNew:   (perfMonthlyBase.keiyakuNew || 0)   + perf.keiyakuNew,
+      canTotal:     (perfMonthlyBase.canTotal || 0)     + perf.canTotal,
+      canNew:       (perfMonthlyBase.canNew || 0)       + perf.canNew,
+      nohinTotal:   (perfMonthlyBase.nohinTotal || 0)   + perf.nohinTotal,
+      nohinNew:     (perfMonthlyBase.nohinNew || 0)     + perf.nohinNew
+    };
+
+    // エリア・事業部
+    const division = document.getElementById("divisionSelect").value || "";
+    const area = document.getElementById("areaSelect").value || "";
+
+    return {
+      action: "submit",
+      user: document.getElementById("userSelect").value,
+      division,
+      area,
+      reportDate: document.getElementById("reportDate").value,
+      counts,
+      today,
+      nextDate: nextDateStr,
+      nextFree,
+      memo: (document.getElementById("memo-text") || {}).value || "",
+      aichiPref,
+      totalCount,
+      sales,
+      perf,
+      perfMonthly,
+      meet,
+      raijo,
+      respJA,
+      respSeikyo,
+      stock,
+      mailBody: buildReport()
+    };
+  }
+
+  function showPreview() {
+    document.getElementById("previewText").textContent = buildReport();
+    document.getElementById("previewModal").classList.add("show");
+  }
+  function closeModal() {
+    document.getElementById("previewModal").classList.remove("show");
+  }
+
+  // ===== 送信処理（GAS連携） =====
+  async function sendReport() {
+    if (recipients.length === 0) {
+      closeModal();
+      showToast("⚠ 送信先が未設定です。タイトル下の📧アイコンから設定してください");
+      setTimeout(() => openRecipientsModal(), 1500);
+      return;
+    }
+    closeModal();
+    showLoading("送信中...");
+    try {
+      const data = collectAllData();
+      const result = await gasPost(data);
+      if (result && result.success) {
+        // 送信成功時に、現在の報告者を端末に保存
+        try {
+          localStorage.setItem("lastUser", data.user || "");
+        } catch (e) {
+          console.warn("localStorage書き込みエラー:", e);
+        }
+        const status = result.mailStatus;
+        if (status === "ok") {
+          showToast(`✓ ${result.mailCount}件の宛先に送信しました`);
+        } else if (status === "no_recipient") {
+          showToast("送信先が登録されていません（社員マスタで設定）");
+        } else {
+          showToast("送信エラー：" + (result.mailError || ""));
+        }
+      } else {
+        showToast("送信失敗：" + (result && result.error || "不明"));
+      }
+    } catch (err) {
+      showToast("通信エラー：" + err.message);
+      console.error(err);
+    } finally {
+      hideLoading();
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3500);
+  }
+</script>
+
+</body>
+</html>
