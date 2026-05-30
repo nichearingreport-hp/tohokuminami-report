@@ -1307,7 +1307,6 @@
     padding: 2px 14px 2px 4px;
     cursor: pointer;
     flex-shrink: 0;
-    margin-top: 2px;
     appearance: none;
     -webkit-appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 10 6'%3e%3cpath fill='%23203764' d='M5 6L0 0h10z'/%3e%3c/svg%3e");
@@ -1319,6 +1318,22 @@
   .list-item .list-dropdown:focus {
     outline: none;
     border-color: var(--turquoise);
+  }
+  /* プルダウンを縦並び（ラベル＋プルダウン）リスト共通 */
+  .dd-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .dd-wrap .dd-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: 0.02em;
   }
 
   /* 相談会専用アイテム */
@@ -1349,6 +1364,45 @@
     font-family: inherit;
     font-size: 13px;
     flex-shrink: 0;
+  }
+  /* 日付グループ：テキスト欄 + カレンダーアイコン */
+  .meet-item .meet-date-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+  }
+  .meet-item .meet-date-picker {
+    width: 26px;
+    height: 30px;
+    border: 1px solid var(--gray);
+    background: var(--white);
+    border-radius: 4px;
+    padding: 0;
+    font-size: 0;          /* テキスト隠す */
+    color: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+  }
+  /* カレンダーアイコンを中央に表示 */
+  .meet-item .meet-date-picker::before {
+    content: "📅";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: var(--navy);
+    pointer-events: none;
+  }
+  /* iOS Safari の date input ネイティブアイコンを隠す */
+  .meet-item .meet-date-picker::-webkit-date-and-time-value { display: none; }
+  .meet-item .meet-date-picker::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    cursor: pointer;
   }
   .meet-item .meet-venue {
     flex: 1;
@@ -1560,8 +1614,8 @@
   }
   .stock-item input[type="text"] {
     flex: 1;
-    border: 1px solid transparent;
-    background: transparent;
+    border: 1px solid rgba(0,0,0,0.12);
+    background: var(--white);
     font-family: inherit;
     font-size: 13px;
     padding: 4px 6px;
@@ -2353,7 +2407,7 @@
   // ==========================================================
   //  アプリ バージョン（更新時はここの数字だけ変える）
   // ==========================================================
-  const APP_VERSION = "HYSDR_tohokuminami7.2.0";
+  const APP_VERSION = "HYSDR_tohokuminami7.4.3";
 
   // ==========================================================
   //  ログインパスワード（1日1回・同日2回目以降は自動通過）
@@ -2481,7 +2535,7 @@
     { key: "soudan", label: "相談会", placeholder: "" },
     { key: "jsho", label: "JA紹介", placeholder: "" },
     { key: "kakusho", label: "客紹介", placeholder: "" },
-    { key: "henshin", label: "返信/問合", placeholder: "例：返信DM JAなごや 川口様→XF960両耳 4/14納品" },
+    { key: "henshin", label: "返信/問合", placeholder: "" },
     { key: "tsuikai", label: "追加/買替", placeholder: "" },
     { key: "so", label: "SO", placeholder: "" },
     { key: "seikyo", label: "生協", placeholder: "" },
@@ -2759,16 +2813,23 @@
     div.className = "list-item" + (type ? " " + type : "");
     if (category) div.dataset.category = category;
 
-    // プルダウン部分のHTML
+    // プルダウン部分のHTML（各プルダウンの上にラベル表示）
     let dropdownsHtml = "";
     const dropdowns = LIST_CATEGORY_DROPDOWNS[category] || [];
+    const DD_LABELS = {
+      result: "フェーズ",
+      venue: "会場種類",
+      kind: "ID",
+      apo: "アポ種類"
+    };
     dropdowns.forEach(dd => {
       const selected = dropdownValues[dd.name] || dd.options[0];
-      dropdownsHtml += `<select class="list-dropdown" data-name="${dd.name}">`;
+      const labelText = DD_LABELS[dd.name] || "";
+      dropdownsHtml += `<div class="dd-wrap"><div class="dd-label">${labelText}</div><select class="list-dropdown" data-name="${dd.name}">`;
       dd.options.forEach(opt => {
         dropdownsHtml += `<option value="${opt}"${opt === selected ? " selected" : ""}>${opt || "—"}</option>`;
       });
-      dropdownsHtml += `</select>`;
+      dropdownsHtml += `</select></div>`;
     });
 
     // プレースホルダー
@@ -2855,11 +2916,14 @@
     const venuePlaceholder = isSeikyo ? "例：コープあいち○○○" : "例：JAなごや○○○";
     div.innerHTML = `
       <span class="seq-num"></span>
-      <select class="meet-venue-type list-dropdown" data-name="venueType">
+      <div class="dd-wrap"><div class="dd-label">会場種類</div><select class="meet-venue-type list-dropdown" data-name="venueType">
         <option value=""${venueOpt === "" ? " selected" : ""}>—</option>
         <option value="サポ会場"${venueOpt === "サポ会場" ? " selected" : ""}>サポ会場</option>
-      </select>
-      <input type="text" class="meet-date" placeholder="4/15" value="${data.date || ''}">
+      </select></div>
+      <div class="dd-wrap meet-date-wrap"><div class="dd-label">日付</div><div class="meet-date-group">
+        <input type="text" class="meet-date" placeholder="4/15" value="${data.date || ''}">
+        <input type="date" class="meet-date-picker" tabindex="-1" aria-label="カレンダーから選択">
+      </div></div>
       <input type="text" class="meet-venue" placeholder="${venuePlaceholder}" value="${data.venue || ''}">
       <div class="meet-num-group">
         <span class="meet-num-label">新規</span>
@@ -2890,6 +2954,20 @@
     div.querySelector(".meet-venue-type").addEventListener("change", () => {
       updateAllCounts();
     });
+    // 日付ピッカー：選択するとテキスト欄に「M/D」形式で入力
+    const datePicker = div.querySelector(".meet-date-picker");
+    const dateText = div.querySelector(".meet-date");
+    if (datePicker && dateText) {
+      datePicker.addEventListener("change", () => {
+        if (datePicker.value) {
+          const parts = datePicker.value.split("-");
+          if (parts.length === 3) {
+            dateText.value = `${parseInt(parts[1])}/${parseInt(parts[2])}`;
+            dateText.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        }
+      });
+    }
     return div;
   }
 
@@ -3335,13 +3413,14 @@
     const div = document.createElement("div");
     div.className = "stock-item";
     div.innerHTML = `
-      <input type="text" placeholder="例：XF777-DWC ×2台" value="${text}">
-      <button class="delete-btn" onclick="this.parentElement.remove(); updateAllCounts();">×</button>
+      <input type="text" placeholder="" value="${text}">
+      <button class="delete-btn" onclick="this.parentElement.remove(); updateAllCounts(); if (typeof saveDraft === 'function') saveDraft();">×</button>
     `;
     list.appendChild(div);
     div.querySelector("input").addEventListener("input", updateAllCounts);
     if (!text) div.querySelector("input").focus();
     updateAllCounts();
+    if (typeof saveDraft === "function") saveDraft();
   }
 
   // エリア内在庫データ（メール本文構築時に使用）
@@ -3632,11 +3711,15 @@
           .filter(t => t.trim().length > 0);
         if (items.length > 0) todayData[cat.key] = items;
       });
+      // 在庫（テキスト配列・空欄も含めて全行保持）
+      const stockItems = Array.from(document.querySelectorAll("#stock-list input"))
+        .map(i => i.value);
       const draft = {
         date: getTodayDateStr(),
         today: todayData,
         memo: (document.getElementById("memo-text") || {}).value || "",
-        nextFree: (document.querySelector('[data-key="next-free"]') || {}).value || ""
+        nextFree: (document.querySelector('[data-key="next-free"]') || {}).value || "",
+        stock: stockItems
       };
       localStorage.setItem(getDraftKey(), JSON.stringify(draft));
     } catch (e) {
@@ -3678,6 +3761,14 @@
         const nf = document.querySelector('[data-key="next-free"]');
         if (nf) nf.value = draft.nextFree;
       }
+      // 在庫を復元（下書きにある場合は前日引継より優先）
+      if (Array.isArray(draft.stock)) {
+        const stockList = document.getElementById("stock-list");
+        if (stockList) {
+          stockList.innerHTML = "";
+          draft.stock.forEach(text => addStock(text));
+        }
+      }
       updateAllCounts();
     } catch (e) {
       console.warn("下書き復元エラー:", e);
@@ -3696,12 +3787,21 @@
     document.addEventListener("input", (e) => {
       const t = e.target;
       if (!t) return;
-      // 本日の商談・メモ・翌営業日の予定の入力欄のみ対象
+      // 本日の商談・メモ・翌営業日の予定・在庫の入力欄を対象
       const isToday = t.closest && t.closest(".today-sub-list");
       const isMemo = t.id === "memo-text";
       const isNextFree = t.dataset && t.dataset.key === "next-free";
-      if (isToday || isMemo || isNextFree) {
+      const isStock = t.closest && t.closest("#stock-list");
+      if (isToday || isMemo || isNextFree || isStock) {
         saveDraft();
+      }
+    });
+    // 在庫の追加・削除時にも保存
+    document.addEventListener("click", (e) => {
+      const t = e.target;
+      if (!t) return;
+      if (t.closest && t.closest("#stock-list .delete-btn")) {
+        setTimeout(saveDraft, 0);
       }
     });
   }
