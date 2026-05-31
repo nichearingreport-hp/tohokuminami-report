@@ -2198,7 +2198,7 @@
     <div class="section-body">
       <div class="warning-note">
         <div class="warning-text">
-          <span class="line1">各案件の右端の<span class="pink-tag">結果プルダウン</span>を必ず選択する（契約・再訪・貸出・SO・検討/後追・未計上・他）</span>
+          <span class="line1">各案件の右端の<span class="pink-tag">フェーズプルダウン</span>を必ず選択する（契約・再訪・貸出・SO・検討/後追・未計上・他）</span>
           <span class="line2">※結果で自動色付け。未選択は黄色で表示／メールは契約[⭕️]等で表記</span>
         </div>
       </div>
@@ -2226,7 +2226,7 @@
     <div class="section-body">
       <div class="warning-note">
         <div class="warning-text">
-          <span class="line1">各案件の右端の<span class="pink-tag">結果プルダウン</span>を必ず選択する（契約・再訪・貸出・SO・検討/後追・未計上・他）</span>
+          <span class="line1">各案件の右端の<span class="pink-tag">フェーズプルダウン</span>を必ず選択する（契約・再訪・貸出・SO・検討/後追・未計上・他）</span>
           <span class="line2">※結果で自動色付け。未選択は黄色で表示／メールは契約[⭕️]等で表記</span>
         </div>
       </div>
@@ -2289,7 +2289,7 @@
     <div class="section-body">
       <div class="warning-note">
         <div class="warning-text">
-          <span class="line1">各案件の右端の<span class="pink-tag">結果プルダウン</span>を必ず選択する（契約・再訪・貸出・SO・検討/後追・未計上・他）</span>
+          <span class="line1">各案件の右端の<span class="pink-tag">フェーズプルダウン</span>を必ず選択する（契約・再訪・貸出・SO・検討/後追・未計上・他）</span>
           <span class="line2">※結果で自動色付け。未選択は黄色で表示／メールは契約[⭕️]等で表記</span>
         </div>
       </div>
@@ -2407,7 +2407,7 @@
   // ==========================================================
   //  アプリ バージョン（更新時はここの数字だけ変える）
   // ==========================================================
-  const APP_VERSION = "HYSDR_tohokuminami7.4.3";
+  const APP_VERSION = "HYSDR_tohokuminami7.5.0";
 
   // ==========================================================
   //  ログインパスワード（1日1回・同日2回目以降は自動通過）
@@ -2447,6 +2447,99 @@
       });
     }
   })();
+
+  // ==========================================================
+  //  デバイス足跡（v7.5.0で追加）
+  //  端末ID・OS・ブラウザ・初回登録日を取得
+  //  - 端末IDは初回のみ自動生成し、以降は同じIDを使い続ける
+  //  - OS・ブラウザはUser-Agentから自動判定
+  // ==========================================================
+  function getDeviceFootprint() {
+    let deviceId = "";
+    let firstUseDate = "";
+
+    // 1. 端末ID（localStorageに永続保存）
+    try {
+      deviceId = localStorage.getItem("deviceId") || "";
+      if (!deviceId) {
+        if (window.crypto && crypto.randomUUID) {
+          deviceId = crypto.randomUUID();
+        } else {
+          // フォールバック（古いブラウザ向け）
+          deviceId = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+            const r = Math.random() * 16 | 0;
+            const v = c === "x" ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+        }
+        localStorage.setItem("deviceId", deviceId);
+      }
+      // 初回登録日
+      firstUseDate = localStorage.getItem("deviceFirstUse") || "";
+      if (!firstUseDate) {
+        const now = new Date();
+        const y  = now.getFullYear();
+        const m  = String(now.getMonth() + 1).padStart(2, "0");
+        const d  = String(now.getDate()).padStart(2, "0");
+        const hh = String(now.getHours()).padStart(2, "0");
+        const mm = String(now.getMinutes()).padStart(2, "0");
+        firstUseDate = `${y}-${m}-${d} ${hh}:${mm}`;
+        localStorage.setItem("deviceFirstUse", firstUseDate);
+      }
+    } catch (e) {
+      console.warn("デバイス情報取得エラー:", e);
+    }
+
+    // 2. OS判定
+    const ua = navigator.userAgent || "";
+    let os = "不明";
+    if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) {
+      const m = ua.match(/OS (\d+)[_.](\d+)/);
+      os = m ? `iPadOS ${m[1]}.${m[2]}` : "iPadOS";
+    } else if (/iPhone|iPod/.test(ua)) {
+      const m = ua.match(/OS (\d+)[_.](\d+)/);
+      os = m ? `iOS ${m[1]}.${m[2]}` : "iOS";
+    } else if (/Android/.test(ua)) {
+      const m = ua.match(/Android (\d+(?:\.\d+)?)/);
+      os = m ? `Android ${m[1]}` : "Android";
+    } else if (/Windows NT 10/.test(ua)) {
+      os = "Windows 10/11";
+    } else if (/Windows NT/.test(ua)) {
+      const m = ua.match(/Windows NT (\d+\.\d+)/);
+      os = m ? `Windows NT ${m[1]}` : "Windows";
+    } else if (/Mac OS X/.test(ua)) {
+      const m = ua.match(/Mac OS X (\d+)[_.](\d+)/);
+      os = m ? `macOS ${m[1]}.${m[2]}` : "macOS";
+    } else if (/Linux/.test(ua)) {
+      os = "Linux";
+    }
+
+    // 3. ブラウザ判定
+    let browser = "不明";
+    if (/Edg\//.test(ua)) {
+      const m = ua.match(/Edg\/(\d+)/);
+      browser = m ? `Edge ${m[1]}` : "Edge";
+    } else if (/OPR\//.test(ua)) {
+      const m = ua.match(/OPR\/(\d+)/);
+      browser = m ? `Opera ${m[1]}` : "Opera";
+    } else if (/Chrome\//.test(ua) && !/Edg/.test(ua)) {
+      const m = ua.match(/Chrome\/(\d+)/);
+      browser = m ? `Chrome ${m[1]}` : "Chrome";
+    } else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) {
+      const m = ua.match(/Version\/(\d+)/);
+      browser = m ? `Safari ${m[1]}` : "Safari";
+    } else if (/Firefox\//.test(ua)) {
+      const m = ua.match(/Firefox\/(\d+)/);
+      browser = m ? `Firefox ${m[1]}` : "Firefox";
+    }
+
+    return {
+      deviceId: deviceId,
+      os: os,
+      browser: browser,
+      firstUseDate: firstUseDate
+    };
+  }
 
   // ==========================================================
   //  GAS連携設定
@@ -4539,7 +4632,8 @@
       respJA,
       respSeikyo,
       stock,
-      mailBody: buildReport()
+      mailBody: buildReport(),
+      device: getDeviceFootprint()
     };
   }
 
