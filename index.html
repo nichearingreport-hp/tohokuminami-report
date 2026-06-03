@@ -2407,7 +2407,7 @@
   // ==========================================================
   //  アプリ バージョン（更新時はここの数字だけ変える）
   // ==========================================================
-  const APP_VERSION = "HYSDR_tohokuminami7.5.1";
+  const APP_VERSION = "HYSDR_tohokuminami7.5.2";
 
   // ==========================================================
   //  ログインパスワード（1日1回・同日2回目以降は自動通過）
@@ -4079,10 +4079,15 @@
     const vd = (key) => formatNumDisplay(v(key));
     report += `【商談件数 月間累計】 ${formatNumDisplay(grandTotal)}件\n`;
     report += "───────\n";
-    report += `《${aichiPref}》　合計商談 ${formatNumDisplay(aichiSum)}件 (新規${formatNumDisplay(aichiShinki)}件、リピート${formatNumDisplay(aichiRepeat)}件、その他${formatNumDisplay(aichiOther)}件)\n`;
-    report += `  相談会 ${vd("aichi-soudan")}　返信 ${vd("aichi-henshin")}　問合 ${vd("aichi-toiawase")}　J紹 ${vd("aichi-jsho")}　客紹 ${vd("aichi-kakusho")}　追買 ${vd("aichi-tsuikai")}　SO ${vd("aichi-so")}　その他 ${vd("aichi-other")}件\n`;
-    report += `《生協》　合計商談 ${formatNumDisplay(seikyoSum)}件 (新規${formatNumDisplay(seikyoShinki)}件、リピート${formatNumDisplay(seikyoRepeat)}件、その他${formatNumDisplay(seikyoOther)}件)\n`;
-    report += `  相談会 ${vd("seikyo-soudan")}　返信 ${vd("seikyo-henshin")}　問合 ${vd("seikyo-toiawase")}　${seikyoJshoLabel} ${vd("seikyo-jsho")}　客紹 ${vd("seikyo-kakusho")}　追買 ${vd("seikyo-tsuikai")}　SO ${vd("seikyo-so")}　その他 ${vd("seikyo-other")}件\n\n`;
+    // v7.5.2: 全小項目に記入なしの場合、中身は空欄（項目名と区切り線は表示）
+    if (aichiSum > 0 || seikyoSum > 0) {
+      report += `《${aichiPref}》　合計商談 ${formatNumDisplay(aichiSum)}件 (新規${formatNumDisplay(aichiShinki)}件、リピート${formatNumDisplay(aichiRepeat)}件、その他${formatNumDisplay(aichiOther)}件)\n`;
+      report += `  相談会 ${vd("aichi-soudan")}　返信 ${vd("aichi-henshin")}　問合 ${vd("aichi-toiawase")}　J紹 ${vd("aichi-jsho")}　客紹 ${vd("aichi-kakusho")}　追買 ${vd("aichi-tsuikai")}　SO ${vd("aichi-so")}　その他 ${vd("aichi-other")}件\n`;
+      report += `《生協》　合計商談 ${formatNumDisplay(seikyoSum)}件 (新規${formatNumDisplay(seikyoShinki)}件、リピート${formatNumDisplay(seikyoRepeat)}件、その他${formatNumDisplay(seikyoOther)}件)\n`;
+      report += `  相談会 ${vd("seikyo-soudan")}　返信 ${vd("seikyo-henshin")}　問合 ${vd("seikyo-toiawase")}　${seikyoJshoLabel} ${vd("seikyo-jsho")}　客紹 ${vd("seikyo-kakusho")}　追買 ${vd("seikyo-tsuikai")}　SO ${vd("seikyo-so")}　その他 ${vd("seikyo-other")}件\n\n`;
+    } else {
+      report += "\n";
+    }
 
     report += "【本日の商談・結果】\n";
     report += "───────\n";
