@@ -2407,7 +2407,7 @@
   // ==========================================================
   //  アプリ バージョン（更新時はここの数字だけ変える）
   // ==========================================================
-  const APP_VERSION = "HYSDR_tohokuminami7.5.0";
+  const APP_VERSION = "HYSDR_tohokuminami7.5.1";
 
   // ==========================================================
   //  ログインパスワード（1日1回・同日2回目以降は自動通過）
@@ -4404,20 +4404,25 @@
       if (others.length === 0) {
         report += "（同エリアの他社員データなし）\n";
       } else {
-        others.forEach(s => {
-          // 名前行：報告ありは「（最終M/D）」、未報告はカッコなし
-          let nameLine = `■${s.name}`;
-          if (s.hasRecord) {
-            nameLine += `（最終${s.lastReportDate || "-"}）`;
-          }
-          report += `${nameLine}\n`;
-          if (s.stock && s.stock.length > 0) {
-            s.stock.forEach(t => report += `${t}\n`);
-          } else {
-            report += "（在庫なし）\n";
-          }
-          report += "\n";
-        });
+        // v7.5.1: 他社員全員が在庫無しの場合、社員名・「（在庫なし）」とも非表示（空欄）
+        const anyHasStock = others.some(s => s && s.stock && s.stock.length > 0);
+        if (anyHasStock) {
+          others.forEach(s => {
+            // 名前行：報告ありは「（最終M/D）」、未報告はカッコなし
+            let nameLine = `■${s.name}`;
+            if (s.hasRecord) {
+              nameLine += `（最終${s.lastReportDate || "-"}）`;
+            }
+            report += `${nameLine}\n`;
+            if (s.stock && s.stock.length > 0) {
+              s.stock.forEach(t => report += `${t}\n`);
+            } else {
+              report += "（在庫なし）\n";
+            }
+            report += "\n";
+          });
+        }
+        // 全員在庫なしの場合は何も出力しない（タイトル＋区切り線のみ残る）
       }
     }
     report += "\n━━━━━━━━━━━━━━━━━━━━━\n";
