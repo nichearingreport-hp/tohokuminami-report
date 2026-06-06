@@ -2174,6 +2174,11 @@
       <span class="toggle">▼</span>
     </div>
     <div class="section-body">
+      <!-- v7.5.3: 《JA》会場見出しを追加（生協と同様の表記） -->
+      <div class="list-area-title">
+        <span>《JA》会場</span>
+        <span class="sub-count meet-count" id="cnt-meet-ja">JA0会場（内サポ会場 0）、新規0名、顧客0名</span>
+      </div>
       <div id="meet-pref-blocks"></div>
       <button class="add-pref-btn" onclick="addPrefBlock('meet')">＋ 県を追加</button>
 
@@ -2407,7 +2412,7 @@
   // ==========================================================
   //  アプリ バージョン（更新時はここの数字だけ変える）
   // ==========================================================
-  const APP_VERSION = "HYSDR_tohokuminami7.5.2";
+  const APP_VERSION = "HYSDR_tohokuminami7.5.3";
 
   // ==========================================================
   //  ログインパスワード（1日1回・同日2回目以降は自動通過）
@@ -3340,6 +3345,11 @@
     document.getElementById("badge-meet-koukyaku").textContent = meetKoukyaku;
     const supportEl = document.getElementById("badge-meet-support");
     if (supportEl) supportEl.textContent = meetSupport;
+    // v7.5.3: 《JA》会場見出し横のサブカウント
+    const cntMeetJa = document.getElementById("cnt-meet-ja");
+    if (cntMeetJa) {
+      cntMeetJa.textContent = `JA${meetCount}会場（内サポ会場 ${meetSupport}）、新規${meetShinki}名、顧客${meetKoukyaku}名`;
+    }
     // 生協ブロック横：生協のみ表示
     const meetSeikyoList = document.getElementById("meet-seikyo-list");
     if (meetSeikyoList) {
