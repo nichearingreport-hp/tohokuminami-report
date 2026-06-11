@@ -2412,7 +2412,24 @@
   // ==========================================================
   //  アプリ バージョン（更新時はここの数字だけ変える）
   // ==========================================================
-  const APP_VERSION = "HYSDR_tohokuminami7.5.3";
+  const APP_VERSION = "HYSDR_tohokuminami7.5.5";
+
+  // ==========================================================
+  //  v7.5.5: 入力内容の上書き事故防止ガード
+  //  - formDirty: ユーザーが何か入力したら true
+  //  - lastLoadedUser: 最後にデータを読み込んだ報告者
+  // ==========================================================
+  let formDirty = false;
+  let lastLoadedUser = "";
+  ["input", "change"].forEach(evtName => {
+    document.addEventListener(evtName, (e) => {
+      const t = e.target;
+      if (!t) return;
+      if (t.id === "userSelect" || t.id === "areaSelect" || t.id === "divisionSelect") return;
+      formDirty = true;
+    }, true);
+  });
+
 
   // ==========================================================
   //  ログインパスワード（1日1回・同日2回目以降は自動通過）
@@ -2773,6 +2790,7 @@
       const result = await gasPost({
         action: "saveRecipients",
         user: userName,
+        division: (document.getElementById("divisionSelect") || {}).value || "",
         recipients: newRecipients
       });
       if (result && result.success) {
@@ -3542,6 +3560,9 @@
         areaStocksData = Array.isArray(result.areaStocks) ? result.areaStocks : [];
         // 当日の下書きがあれば復元（本日の商談・メモ・翌営業日の予定）
         restoreDraft();
+        // v7.5.5: データ読込が完了した報告者を記録し、入力フラグをリセット
+        lastLoadedUser = userName;
+        formDirty = false;
       }
     } catch (err) {
       showToast("データ取得に失敗しました: " + err.message);
@@ -3773,6 +3794,15 @@
     // メモは毎回クリア（前日引継しない）
     const memoEl = document.getElementById("memo-text");
     if (memoEl) memoEl.value = "";
+    // v7.5.5: 本日の商談リストもクリア（前の報告者の内容が残るのを防止）
+    if (typeof TODAY_CATS !== "undefined") {
+      TODAY_CATS.forEach(cat => {
+        const list = document.getElementById(`today-${cat.key}-list`);
+        if (list) list.innerHTML = "";
+      });
+    }
+    // v7.5.5: 集計表示を再計算（合計・バッジに前の報告者の数値が残るのを防止）
+    if (typeof updateAllCounts === "function") updateAllCounts();
   }
 
   function clearAllLists() {
@@ -3833,6 +3863,15 @@
   // 下書きを復元（同日のみ。翌日ならクリア）
   function restoreDraft() {
     try {
+      // v7.5.5: 復元前に「本日の商談」リストを必ずクリア
+      //（前の報告者の下書きが画面に残ったまま切り替わるのを防止）
+      if (typeof TODAY_CATS !== "undefined") {
+        TODAY_CATS.forEach(cat => {
+          const list = document.getElementById(`today-${cat.key}-list`);
+          if (list) list.innerHTML = "";
+        });
+      }
+      if (typeof updateAllCounts === "function") updateAllCounts();
       const raw = localStorage.getItem(getDraftKey());
       if (!raw) return;
       const draft = JSON.parse(raw);
@@ -3955,6 +3994,16 @@
         }
         // 報告者変更時のリスナー（選択時に端末に保存）
         sel.addEventListener("change", () => {
+          // v7.5.5: 報告者切替時の上書き事故防止ガード
+          if (lastLoadedUser && sel.value !== lastLoadedUser) {
+            const msg = formDirty
+              ? "⚠ 入力途中の内容があります。\n\n報告者を「" + sel.value + "」さんに切り替えると、いま入力されている内容は失われ、元に戻せません。\n\nこのまま切り替えますか？"
+              : "報告者を「" + sel.value + "」さんに切り替えます。\n画面の内容は「" + sel.value + "」さんの保存データに置き換わります。\n\nよろしいですか？";
+            if (!confirm(msg)) {
+              sel.value = lastLoadedUser;
+              return;
+            }
+          }
           try {
             localStorage.setItem("lastUser", sel.value);
           } catch (e) {
@@ -4666,6 +4715,24 @@
   }
 
   // ===== 送信処理（GAS連携） =====
+
+  // v7.5.5: 報告データが実質的に空かどうかを判定（前月繰越・来月繰越は判定から除外）
+  function isReportEmpty(d) {
+    const sumObj = (o) => Object.values(o || {}).reduce((s, v) => s + (Number(v) || 0), 0);
+    const countsSum = sumObj(d.counts);
+    const perfSum = sumObj(d.perf);
+    const salesToday = (Number(d.sales && d.sales.thisJA) || 0) + (Number(d.sales && d.sales.thisSeikyo) || 0);
+    const todayCnt = Object.values(d.today || {}).reduce((s, a) => s + (Array.isArray(a) ? a.length : 0), 0);
+    const meetCnt = (((d.meet && d.meet.prefs) || []).reduce((s, p) => s + ((p.items || []).length), 0)) +
+                    (((d.meet && d.meet.seikyo) || []).length);
+    const respCnt =
+      ["respH", "respT", "respJ", "respS"].reduce((s, k) => s + (((d.respJA || {})[k] || []).length), 0) +
+      ["srespH", "srespT", "srespJ", "srespS"].reduce((s, k) => s + (((d.respSeikyo || {})[k] || []).length), 0);
+    const stockCnt = Array.isArray(d.stock) ? d.stock.filter(x => String(x || "").trim().length > 0).length : 0;
+    return countsSum === 0 && perfSum === 0 && salesToday === 0 &&
+           todayCnt === 0 && meetCnt === 0 && respCnt === 0 && stockCnt === 0;
+  }
+
   async function sendReport() {
     if (recipients.length === 0) {
       closeModal();
@@ -4677,6 +4744,26 @@
     showLoading("送信中...");
     try {
       const data = collectAllData();
+      // v7.5.5: 報告者未選択ガード
+      if (!data.user) {
+        hideLoading();
+        showToast("先に報告者を選択してください");
+        return;
+      }
+      // v7.5.5: 入力がすべて空（0件）のまま送信しようとした場合の確認
+      if (isReportEmpty(data)) {
+        hideLoading();
+        const ok = confirm(
+          "⚠ 報告内容がすべて空（0件）のようです。\n" +
+          "このまま送信すると、スプレッドシートにも0件・空の状態で記録されます。\n\n" +
+          "本当に送信しますか？"
+        );
+        if (!ok) {
+          showToast("送信を中止しました（入力内容をご確認ください）");
+          return;
+        }
+        showLoading("送信中...");
+      }
       const result = await gasPost(data);
       if (result && result.success) {
         // 送信成功時に、現在の報告者を端末に保存
@@ -4685,6 +4772,8 @@
         } catch (e) {
           console.warn("localStorage書き込みエラー:", e);
         }
+        // v7.5.5: 送信完了したため入力フラグをリセット
+        formDirty = false;
         const status = result.mailStatus;
         if (status === "ok") {
           showToast(`✓ ${result.mailCount}件の宛先に送信しました`);
